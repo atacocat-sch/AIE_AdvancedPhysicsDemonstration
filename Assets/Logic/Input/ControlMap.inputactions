@@ -22,6 +22,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "throw",
+                    "type": "Button",
+                    "id": "aaedfab7-c87e-4232-9673-0e009e2b48f4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "pickupAndDrop",
+                    "type": "Button",
+                    "id": "7ec99c84-f55d-4a72-8370-770efcaa9141",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "inventory",
+                    "type": "Button",
+                    "id": "8c1091c6-bcfe-4006-ae16-5003632d98c4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -88,6 +115,87 @@
                     "processors": "",
                     "groups": "",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "35d07ca3-d7e0-44dc-a7f8-2208ef80387f",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "throw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7fffb37c-552e-4608-9976-0b78d77e08d8",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "pickupAndDrop",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f68e2402-5c3c-426a-8df4-007f4b3a37a7",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "inventory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Player Persistant",
+            "id": "d4e1e94e-ab66-4e54-b18d-d65cc9389dab",
+            "actions": [
+                {
+                    "name": "lookAdditive",
+                    "type": "Value",
+                    "id": "b95a0587-0cbc-430a-b9a5-194504e25d62",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "lookDelta",
+                    "type": "Value",
+                    "id": "eebbf6af-a347-4b15-9003-67c9964f6cfa",
+                    "expectedControlType": "Vector2",
+                    "processors": "ScaleVector2(y=-1)",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "cf57d58b-10c9-4327-b979-d5b3c98f5afe",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "lookDelta",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3178df3c-b6fc-4c34-a577-e39a7362dfd1",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "lookAdditive",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
