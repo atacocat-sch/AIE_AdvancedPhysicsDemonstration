@@ -77,6 +77,8 @@ namespace BoschingMachine.Bipedal
 
         private void MoveCharacter(Rigidbody rigidbody, Vector3 moveDirection)
         {
+            moveDirection = Vector3.ClampMagnitude(moveDirection, 1.0f);
+
             if (IsGrounded)
             {
                 Vector3 target = moveDirection * moveSpeed;

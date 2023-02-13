@@ -1,16 +1,14 @@
 using UnityEngine;
 using BoschingMachine.Bipedal;
 using BoschingMachine.Player.Modules;
-using BoschingMachine.Items;
 using UnityEngine.InputSystem;
-using BoschingMachine.Items.UI;
 using System.Collections.Generic;
 
 namespace BoschingMachine.Player
 {
     [SelectionBase]
     [DisallowMultipleComponent]
-    public sealed class PlayerBiped : Biped, IHasInventory
+    public sealed class PlayerBiped : Biped
     {
         [Space]
         [SerializeField] InputActionAsset inputAsset;
@@ -24,11 +22,9 @@ namespace BoschingMachine.Player
         [SerializeField] float lookAdditiveSensitivity;
 
         [Space]
-        [SerializeField] Inventory inventory;
         [SerializeField] Interactor interactor;
 
         Vector2 lookRotation;
-        InventoryUI inventoryUI;
 
         InputActionMap playerMap;
         InputActionMap persistantMap;
@@ -60,7 +56,6 @@ namespace BoschingMachine.Player
         public override Vector2 LookRotation => lookRotation;
         public float FOV { get; set; }
         public float ViewmodelFOV { get; set; }
-        public Inventory Inventory => inventory;
 
         protected override void Awake()
         {
@@ -82,9 +77,6 @@ namespace BoschingMachine.Player
 
             lookDelta = persistantMap.FindAction("lookDelta");
             lookAdditive = persistantMap.FindAction("lookAdditive");
-
-            inventoryUI = GetComponentInChildren<InventoryUI>();
-            inventory.Setup();
         }
 
         public bool ReadFlag(InputAction action) => action.ReadValue<float>() > 0.5f;
@@ -97,8 +89,6 @@ namespace BoschingMachine.Player
 
             interact.performed += Interact;
             throwObject.performed += Throw;
-
-            inventoryAction.performed += ToggleInventory;
         }
 
         protected override void OnDisable()
@@ -109,8 +99,6 @@ namespace BoschingMachine.Player
 
             interact.performed -= Interact;
             throwObject.performed -= Throw;
-
-            inventoryAction.performed -= ToggleInventory;
         }
 
         protected override void Start()
@@ -132,6 +120,8 @@ namespace BoschingMachine.Player
         protected override void FixedUpdate()
         {
             base.FixedUpdate();
+
+            interactor.FixedUpdate();
 
             pickerUpper.FixedProcess(Rigidbody, holdTarget);
         }
@@ -176,27 +166,10 @@ namespace BoschingMachine.Player
             playerMap.Enable();
         }
 
-        public void ReleaseCursor(InventoryUI inventoryUI)
-        {
-            cursorOverrides.Remove(inventoryUI);
-            UpdateCursorState();
-        }
-
-        public void TakeCursor(InventoryUI inventoryUI)
-        {
-            cursorOverrides.Add(inventoryUI);
-            UpdateCursorState();
-        }
-
         public void UpdateCursorState ()
         {
             cursorOverrides.RemoveAll(q => q == null);
             Cursor.lockState = cursorOverrides.Count == 0 ? CursorLockMode.Locked : CursorLockMode.None;
-        }
-
-        public void ToggleInventory(InputAction.CallbackContext ctx)
-        {
-            inventoryUI.ToggleOpenState();
         }
     }
 }

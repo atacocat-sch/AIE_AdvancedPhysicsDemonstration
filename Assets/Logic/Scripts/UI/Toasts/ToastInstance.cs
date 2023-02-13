@@ -23,6 +23,7 @@ namespace BoschingMachine.UI.Toasts
             textObject = Object.Instantiate(prefab, toast.transform);
             textObject.name = "Toast Instance";
             textObject.gameObject.SetActive(true);
+            textObject.text = message;
 
             toast.StartCoroutine(Loop(finishCallback));
         }
@@ -37,8 +38,6 @@ namespace BoschingMachine.UI.Toasts
                 yield return null;
             }
 
-            textObject.text = message;
-
             yield return new WaitForSeconds(duration);
 
             percent = 0.0f;
@@ -49,19 +48,19 @@ namespace BoschingMachine.UI.Toasts
                 yield return null;
             }
 
-            textObject.text = string.Empty;
-
             finishCallback(this);
         }
 
         public void AnimateIn(float p)
         {
-            textObject.text = AnimHelper.TypewriterReversed(message, p);
+            float s = Curves.EaseOutBack(p);
+            textObject.transform.localScale = Vector3.one * s;
         }
 
         public void AnimateOut(float p)
         {
-            textObject.text = AnimHelper.TypewriterReversed(message, 1.0f - p);
+            float s = Curves.EaseOutBack(1.0f - p);
+            textObject.transform.localScale = Vector3.one * s;
         }
 
         public ToastInstance Destroy()

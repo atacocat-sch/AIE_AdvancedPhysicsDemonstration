@@ -16,6 +16,11 @@ namespace BoschingMachine
 
         Biped biped;
 
+        public void FixedUpdate ()
+        {
+            uiHandler.FixedUpdate();
+        }
+
         public void Update(Biped biped, bool use)
         {
             uiHandler.UpdateUI(this, biped);
@@ -85,9 +90,16 @@ namespace BoschingMachine
         [SerializeField] Image progressBar;
         [SerializeField] SeccondOrderDynamicsF spring;
 
+        float springTarget;
+
+        public void FixedUpdate ()
+        {
+            spring.Loop(springTarget, null, Time.deltaTime);
+        }
+
         public void UpdateUI(Interactor interactor, Biped biped)
         {
-            float s = 1.0f;
+            springTarget = 1.0f;
 
             Interactable interactable = interactor.CurrentInteractable;
             if (!interactable) interactor.TryGetLookingAt(biped, out interactable);
@@ -97,9 +109,8 @@ namespace BoschingMachine
                 label.text = interactable.InteractName;
                 progressBar.transform.localScale = new Vector3(interactable.GetInteractPercent(biped), 1.0f, 1.0f);
             }
-            else s = 0.0f;
+            else springTarget = 0.0f;
 
-            spring.Loop(s, null, Time.deltaTime);
             hoverGroup.transform.localScale = Vector3.one * spring.Position;
 
             if (spring.Position < 0.0f)

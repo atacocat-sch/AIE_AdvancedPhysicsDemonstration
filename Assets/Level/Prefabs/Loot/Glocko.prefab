@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 4831172158442482006}
   - component: {fileID: 4831172158442482007}
   - component: {fileID: 4831172158442482004}
-  - component: {fileID: 4831172158442482005}
   m_Layer: 0
   m_Name: Glocko
   m_TagString: Untagged
@@ -129,23 +128,3 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.05240346, y: 0.37207982, z: 0.0781891}
   m_Center: {x: -1.7811422e-16, y: -0.0013656467, z: 0.08991649}
---- !u!114 &4831172158442482005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5749597723199640585}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8db86679767d2441ae5dc604d016910, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactName: Glocko
-  interactTime: 0.5
-  value: 600
-  item:
-    name: Glocko
-    icon: {fileID: 21300000, guid: 825351a80830ae0468e2ad7c140fe803, type: 3}
-    size: {x: 3, y: 2}
-    worldItem: {fileID: 4831172158442482005}
