@@ -2,7 +2,7 @@ using UnityEngine;
 using BoschingMachine.Bipedal;
 using BoschingMachine.Player.Modules;
 using UnityEngine.InputSystem;
-using System.Collections.Generic;
+using BoschingMachine.Vitality;
 
 namespace BoschingMachine.Player
 {
@@ -24,6 +24,16 @@ namespace BoschingMachine.Player
         [Space]
         [SerializeField] Interactor interactor;
 
+        [Space]
+        [SerializeField] Rigidbody deadCamera;
+        [SerializeField] float deadCamForce;
+        [SerializeField] float deadCamTorque;
+
+        [Space]
+        [SerializeField] Signal winSignal;
+
+        public Health health;
+
         Vector2 lookRotation;
 
         InputActionMap playerMap;
@@ -38,8 +48,6 @@ namespace BoschingMachine.Player
         InputAction interact;
 
         InputAction inventoryAction;
-
-        List<object> cursorOverrides = new List<object>();
 
         public override Vector3 MoveDirection
         {
@@ -85,10 +93,18 @@ namespace BoschingMachine.Player
         {
             base.OnEnable();
 
-            UpdateCursorState();
+            Cursor.lockState = CursorLockMode.Locked;
 
             interact.performed += Interact;
             throwObject.performed += Throw;
+
+            if (TryGetComponent(out health))
+            {
+                health.DamageEvent += OnDamage;
+                health.DeathEvent += OnDie;
+            }
+
+            winSignal.RaiseEvent += OnWin;
         }
 
         protected override void OnDisable()
@@ -99,6 +115,13 @@ namespace BoschingMachine.Player
 
             interact.performed -= Interact;
             throwObject.performed -= Throw;
+
+            winSignal.RaiseEvent -= OnWin;
+        }
+
+        private void OnDestroy()
+        {
+            winSignal.RaiseEvent -= OnWin;
         }
 
         protected override void Start()
@@ -115,6 +138,14 @@ namespace BoschingMachine.Player
             base.Update();
 
             pickerUpper.Update(holdTarget);
+
+#if !UNITY_EDITOR
+            if (Keyboard.current.escapeKey.wasPressedThisFrame)
+            {
+                if (Cursor.lockState == CursorLockMode.Locked) Cursor.lockState = CursorLockMode.None;
+                else Cursor.lockState = CursorLockMode.Locked;
+            }
+#endif
         }
 
         protected override void FixedUpdate()
@@ -166,10 +197,27 @@ namespace BoschingMachine.Player
             playerMap.Enable();
         }
 
-        public void UpdateCursorState ()
+        private void OnWin(object sender, System.EventArgs e)
         {
-            cursorOverrides.RemoveAll(q => q == null);
-            Cursor.lockState = cursorOverrides.Count == 0 ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.lockState = CursorLockMode.None;
+            playerMap.Disable();
+            persistantMap.Disable();
+
+            health.Invulnerable = true;
+        }
+
+        private void OnDamage(Health.DamageArgs obj)
+        {
+
+        }
+
+        private void OnDie(Health.DamageArgs obj)
+        {
+            var dcam = Instantiate(deadCamera, Head.position, Head.rotation);
+            dcam.velocity = Rigidbody.GetPointVelocity(Head.position);
+
+            dcam.velocity += Random.insideUnitSphere * deadCamForce;
+            dcam.angularVelocity += Random.insideUnitSphere * deadCamTorque;
         }
     }
 }

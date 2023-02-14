@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace BoschingMachine.Bipedal
@@ -63,7 +64,7 @@ namespace BoschingMachine.Bipedal
         {
             if (IsGrounded && Time.time > lastJumpTime + jumpSpringPauseTime)
             {
-                float contraction = 1.0f - ((DistanceToGround + springDistance) / springDistance);
+                float contraction = 1.0f - (DistanceToGround + springDistance) / springDistance;
                 rigidbody.velocity += Vector3.up * contraction * springForce * Time.deltaTime;
                 rigidbody.velocity -= Vector3.up * rigidbody.velocity.y * springDamper * Time.deltaTime;
             }
@@ -126,11 +127,29 @@ namespace BoschingMachine.Bipedal
 
         public float GetDistanceToGround(Rigidbody rigidbody)
         {
-            if (Physics.SphereCast(rigidbody.position + Vector3.up * groundCheckRadius, groundCheckRadius, Vector3.down, out var hit, 1000.0f, groundCheckMask))
+            List<RaycastHit> hits = new List<RaycastHit>(Physics.SphereCastAll(rigidbody.position + Vector3.up * groundCheckRadius, groundCheckRadius, Vector3.down, 1000.0f, groundCheckMask));
+            hits.Sort((a, b) => a.distance > b.distance ? 1 : -1);
+
+            RaycastHit? hit = null;
+            foreach (var other in hits)
             {
-                Ground = hit.transform.gameObject;
-                GroundRigidbody = hit.rigidbody;
-                return hit.distance;
+                if (!other.rigidbody)
+                {
+                    hit = other;
+                    break;
+                }
+                if (other.rigidbody != rigidbody)
+                {
+                    hit = other;
+                    break;
+                }
+            }
+
+            if (hit.HasValue)
+            {
+                Ground = hit.Value.transform.gameObject;
+                GroundRigidbody = hit.Value.rigidbody;
+                return hit.Value.distance;
             }
             else
             {

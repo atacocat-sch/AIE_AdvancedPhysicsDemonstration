@@ -87,6 +87,7 @@ namespace BoschingMachine.Player.Modules
             if (!heldObject) return false;
 
             heldObject.AddForce(biped.Head.forward * throwForce, ForceMode.Impulse);
+            heldObject.gameObject.AddComponent<MovingInterest>();
             heldObject = null;
 
             return true;

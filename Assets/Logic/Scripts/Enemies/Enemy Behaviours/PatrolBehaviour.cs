@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using BoschingMachine.Enemies;
 
 namespace BoschingMachine.Enemies.Behaviours
 {
@@ -11,6 +8,8 @@ namespace BoschingMachine.Enemies.Behaviours
         [SerializeField] Transform path;
         [SerializeField] float softDistance;
         [SerializeField] float waitTime;
+        [SerializeField] float lookTilt;
+        [SerializeField][Range(0.0f, 1.0f)] float speedScale;
 
         int pathIndex;
         float waitTimer;
@@ -27,6 +26,7 @@ namespace BoschingMachine.Enemies.Behaviours
             else 
             {
                 Vector3 vec = path.GetChild(pathIndex).position - enemy.transform.position;
+                vec.y = 0.0f;
                 if (vec.sqrMagnitude < softDistance * softDistance)
                 {
                     if (waitTimer < waitTime)
@@ -42,10 +42,13 @@ namespace BoschingMachine.Enemies.Behaviours
                 moveDir = vec;
             }
 
-            Debug.Log(moveDir);
+            moveDir.y = 0.0f;
+            moveDir = Vector3.ClampMagnitude(moveDir, speedScale);
 
             enemy.SetMoveDirection(moveDir);
-            enemy.SetLookDirection(enemy.Rigidbody.velocity);
+
+            float a = lookTilt * Mathf.Deg2Rad;
+            enemy.SetLookDirection(enemy.Rigidbody.velocity * Mathf.Cos(a) + Vector3.up * Mathf.Sin(a), 0.1f);
         }
     }
 }
