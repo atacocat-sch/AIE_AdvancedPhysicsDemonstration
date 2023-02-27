@@ -7,7 +7,7 @@ namespace BoschingMachine.Player.Modules
     public sealed class PlayerPickerUpper
     {
         [SerializeField] float grabRange;
-        [SerializeField] float throwForce;
+        [SerializeField] float throwSpeed;
         [SerializeField] float maxDistance;
 
         [Space]
@@ -79,7 +79,10 @@ namespace BoschingMachine.Player.Modules
         {
             if (!heldObject) return false;
 
-            heldObject.AddForce(biped.Head.forward * throwForce, ForceMode.Impulse);
+            Vector3 throwForce = biped.Head.forward * throwSpeed * heldObject.mass;
+            throwForce = Vector3.ClampMagnitude(throwForce, spring.maxForce);
+
+            heldObject.AddForce(throwForce, ForceMode.Impulse);
             heldObject.gameObject.AddComponent<MovingInterest>();
             heldObject = null;
 

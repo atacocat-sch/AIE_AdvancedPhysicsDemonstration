@@ -1,7 +1,7 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using BoschingMachine.Bipedal;
 using BoschingMachine.Player.Modules;
-using UnityEngine.InputSystem;
 using BoschingMachine.Vitality;
 
 namespace BoschingMachine.Player
@@ -47,8 +47,6 @@ namespace BoschingMachine.Player
         InputAction throwObject;
         InputAction interact;
 
-        InputAction inventoryAction;
-
         public override Vector3 MoveDirection
         {
             get
@@ -78,8 +76,6 @@ namespace BoschingMachine.Player
             throwObject = playerMap.FindAction("throw");
             interact = playerMap.FindAction("pickupAndDrop");
             
-            inventoryAction = playerMap.FindAction("inventory");
-
             persistantMap = inputAsset.FindActionMap("Player Persistant");
             persistantMap.Enable();
 

@@ -5,9 +5,9 @@ namespace BoschingMachine
     [System.Serializable]
     public class Spring
     {
-        [SerializeField] float constant = 1000.0f;
-        [SerializeField] float damper = 100.0f;
-        [SerializeField] float maxForce = 600.0f;
+        public float constant = 1000.0f;
+        public float damper = 100.0f;
+        public float maxForce = 600.0f;
 
         public Vector3 Position { get; set; }
         public Vector3 Velocity { get; set; }

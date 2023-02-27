@@ -2676,6 +2676,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 7450225309706915811, guid: a8e692d9cf1431d4189b6430eb4d2e51, type: 3}
+      propertyPath: pickerUpper.throwSpeed
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7450225310659661439, guid: a8e692d9cf1431d4189b6430eb4d2e51, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
