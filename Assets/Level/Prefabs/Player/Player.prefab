@@ -939,7 +939,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movement:
     moveSpeed: 10
-    groundAcceleration: 80
+    groundAcceleration: 150
     airMoveAcceleration: 8
     jumpHeight: 2.5
     upGravity: 3
@@ -949,6 +949,7 @@ MonoBehaviour:
     springForce: 500
     springDamper: 25
     groundCheckRadius: 0.4
+    groundMaxSlope: 46
     groundCheckMask:
       serializedVersion: 2
       m_Bits: 1
@@ -957,10 +958,8 @@ MonoBehaviour:
   pickerUpper:
     grabRange: 4
     throwForce: 75
-    maxForce: 5000
+    maxForce: 600
     maxDistance: 3
-    springForce: 2000
-    springDamper: 15
     rotationDamper: 1
     lines: {fileID: 7450225309444434375}
   holdTarget: {fileID: 7450225310290055695}

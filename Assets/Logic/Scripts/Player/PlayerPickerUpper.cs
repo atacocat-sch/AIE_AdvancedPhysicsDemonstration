@@ -8,12 +8,10 @@ namespace BoschingMachine.Player.Modules
     {
         [SerializeField] float grabRange;
         [SerializeField] float throwForce;
-        [SerializeField] float maxForce;
         [SerializeField] float maxDistance;
 
         [Space]
-        [SerializeField] float springForce;
-        [SerializeField] float springDamper;
+        [SerializeField] Spring spring;
 
         [Space]
         [SerializeField] float rotationDamper;
@@ -28,10 +26,6 @@ namespace BoschingMachine.Player.Modules
             if (!heldObject) return;
 
             Vector3 vec = holdTarget.position - heldObject.position;
-            Vector3 force = vec * springForce;
-            force += -heldObject.velocity * springDamper;
-
-            force = Vector3.ClampMagnitude(force, maxForce);
 
             if (vec.sqrMagnitude > maxDistance * maxDistance)
             {
@@ -39,8 +33,7 @@ namespace BoschingMachine.Player.Modules
                 return;
             }
 
-            heldObject.AddForce(force);
-            rigidbody.AddForce(-force);
+            spring.Drive(heldObject, rigidbody, holdTarget.position);
 
             heldObject.AddTorque(-heldObject.angularVelocity * rotationDamper);
         }

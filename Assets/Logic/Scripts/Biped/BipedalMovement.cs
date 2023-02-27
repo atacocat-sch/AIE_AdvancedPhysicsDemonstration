@@ -23,15 +23,17 @@ namespace BoschingMachine.Bipedal
         [SerializeField] float springForce = 250.0f;
         [SerializeField] float springDamper = 15.0f;
         [SerializeField] float groundCheckRadius = 0.4f;
+        [SerializeField] float groundMaxSlope = 46.0f;
         [SerializeField] LayerMask groundCheckMask = 0b1;
 
         bool previousJumpState;
         float lastJumpTime;
-        
+
         public float MoveSpeed => moveSpeed;
 
         public float DistanceToGround { get; private set; }
-        public bool IsGrounded => DistanceToGround < 0.0f;
+        public Vector3 GroundNormal { get; set; }
+        public bool IsGrounded => DistanceToGround < 0.0f && (Mathf.Acos(Mathf.Clamp01(Vector3.Dot(Vector3.up, GroundNormal))) * Mathf.Rad2Deg) < groundMaxSlope;
         public GameObject Ground { get; private set; }
         public Rigidbody GroundRigidbody { get; private set; }
 
@@ -65,15 +67,17 @@ namespace BoschingMachine.Bipedal
             if (IsGrounded && Time.time > lastJumpTime + jumpSpringPauseTime)
             {
                 float contraction = 1.0f - (DistanceToGround + springDistance) / springDistance;
-                rigidbody.velocity += Vector3.up * contraction * springForce * Time.deltaTime;
-                rigidbody.velocity -= Vector3.up * rigidbody.velocity.y * springDamper * Time.deltaTime;
+                Vector3 moment = Vector3.up * contraction * springForce;
+                moment -= Vector3.up * rigidbody.velocity.y * springDamper;
+
+                AddForceToSelfAndGround(rigidbody, moment, false);
             }
         }
 
         private void ApplyGravity(Rigidbody rigidbody, bool jump)
         {
             rigidbody.useGravity = false;
-            rigidbody.velocity += GetGravity(rigidbody, jump) * Time.deltaTime;
+            rigidbody.AddForce(GetGravity(rigidbody, jump), ForceMode.Acceleration);
         }
 
         private void MoveCharacter(Rigidbody rigidbody, Vector3 moveDirection)
@@ -88,13 +92,13 @@ namespace BoschingMachine.Bipedal
                 Vector3 delta = Vector3.ClampMagnitude(target - current, moveSpeed);
                 delta.y = 0.0f;
 
-                Vector3 force = delta / moveSpeed * groundAcceleration;
+                Vector3 moment = delta / moveSpeed * groundAcceleration;
 
-                rigidbody.velocity += force * Time.deltaTime;
+                AddForceToSelfAndGround(rigidbody, moment, false);
             }
             else
             {
-                rigidbody.velocity += moveDirection * airMoveAcceleration * Time.deltaTime;
+                rigidbody.AddForce(moveDirection * airMoveAcceleration, ForceMode.Acceleration);
             }
         }
 
@@ -104,7 +108,10 @@ namespace BoschingMachine.Bipedal
             {
                 float gravity = Vector3.Dot(Vector3.down, GetGravity(rigidbody, true));
                 float jumpForce = Mathf.Sqrt(2.0f * gravity * jumpHeight);
-                rigidbody.velocity = new Vector3(rigidbody.velocity.x, jumpForce, rigidbody.velocity.z);
+
+                if (rigidbody.velocity.y < 0.0f) rigidbody.AddForce(Vector3.up * -rigidbody.velocity.y, ForceMode.VelocityChange);
+
+                AddForceToSelfAndGround(rigidbody, Vector3.up * jumpForce, true);
 
                 lastJumpTime = Time.time;
             }
@@ -123,6 +130,16 @@ namespace BoschingMachine.Bipedal
             }
 
             return Physics.gravity * scale;
+        }
+
+        public void AddForceToSelfAndGround(Rigidbody self, Vector3 moment, bool impulse)
+        {
+            ForceMode forceMode = impulse ? ForceMode.VelocityChange : ForceMode.Acceleration;
+            self.AddForce(moment, forceMode);
+            if (GroundRigidbody && IsGrounded)
+            {
+                GroundRigidbody.AddForce(-moment * self.mass, forceMode);
+            }
         }
 
         public float GetDistanceToGround(Rigidbody rigidbody)
@@ -149,12 +166,14 @@ namespace BoschingMachine.Bipedal
             {
                 Ground = hit.Value.transform.gameObject;
                 GroundRigidbody = hit.Value.rigidbody;
+                GroundNormal = hit.Value.normal;
                 return hit.Value.distance;
             }
             else
             {
                 Ground = null;
                 GroundRigidbody = null;
+                GroundNormal = Vector3.zero;
                 return float.PositiveInfinity;
             }
         }

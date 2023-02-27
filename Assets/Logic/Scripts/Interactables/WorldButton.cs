@@ -10,6 +10,7 @@ namespace BoschingMachine.Interactables
         [SerializeField] List<GameObject> connections;
 
         public bool State { get; set; }
+        public override bool CanInteract => true;
 
         protected override void FinishInteract(Biped biped)
         {

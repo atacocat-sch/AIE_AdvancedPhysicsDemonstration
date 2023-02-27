@@ -37,6 +37,7 @@ namespace BoschingMachine
             }
             else
             {
+                if (CurrentInteractable) CurrentInteractable.CancelInteract(biped);
                 CurrentInteractable = null;
             }
         }
@@ -106,7 +107,7 @@ namespace BoschingMachine
 
             if (interactable)
             {
-                label.text = interactable.InteractName;
+                label.text = interactable.BuildInteractString();
                 progressBar.transform.localScale = new Vector3(interactable.GetInteractPercent(biped), 1.0f, 1.0f);
             }
             else springTarget = 0.0f;
