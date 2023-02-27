@@ -958,8 +958,11 @@ MonoBehaviour:
   pickerUpper:
     grabRange: 4
     throwForce: 75
-    maxForce: 600
     maxDistance: 3
+    spring:
+      constant: 200
+      damper: 20
+      maxForce: 600
     rotationDamper: 1
     lines: {fileID: 7450225309444434375}
   holdTarget: {fileID: 7450225310290055695}

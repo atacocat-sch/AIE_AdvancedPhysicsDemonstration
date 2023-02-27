@@ -70,7 +70,7 @@ namespace BoschingMachine.Bipedal
                 Vector3 moment = Vector3.up * contraction * springForce;
                 moment -= Vector3.up * rigidbody.velocity.y * springDamper;
 
-                AddForceToSelfAndGround(rigidbody, moment, false);
+                AddMomentToSelfAndGround(rigidbody, moment);
             }
         }
 
@@ -94,7 +94,7 @@ namespace BoschingMachine.Bipedal
 
                 Vector3 moment = delta / moveSpeed * groundAcceleration;
 
-                AddForceToSelfAndGround(rigidbody, moment, false);
+                AddMomentToSelfAndGround(rigidbody, moment);
             }
             else
             {
@@ -111,7 +111,7 @@ namespace BoschingMachine.Bipedal
 
                 if (rigidbody.velocity.y < 0.0f) rigidbody.AddForce(Vector3.up * -rigidbody.velocity.y, ForceMode.VelocityChange);
 
-                AddForceToSelfAndGround(rigidbody, Vector3.up * jumpForce, true);
+                AddMomentToSelfAndGround(rigidbody, Vector3.up * jumpForce, ForceMode.Impulse);
 
                 lastJumpTime = Time.time;
             }
@@ -132,34 +132,27 @@ namespace BoschingMachine.Bipedal
             return Physics.gravity * scale;
         }
 
-        public void AddForceToSelfAndGround(Rigidbody self, Vector3 moment, bool impulse)
+        public void AddMomentToSelfAndGround(Rigidbody self, Vector3 moment, ForceMode forceMode = ForceMode.Force)
         {
-            ForceMode forceMode = impulse ? ForceMode.VelocityChange : ForceMode.Acceleration;
-            self.AddForce(moment, forceMode);
+            Vector3 force = moment * self.mass;
+            self.AddForce(force, forceMode);
             if (GroundRigidbody && IsGrounded)
             {
-                GroundRigidbody.AddForce(-moment * self.mass, forceMode);
+                GroundRigidbody.AddForce(-force, forceMode);
             }
         }
 
         public float GetDistanceToGround(Rigidbody rigidbody)
         {
-            List<RaycastHit> hits = new List<RaycastHit>(Physics.SphereCastAll(rigidbody.position + Vector3.up * groundCheckRadius, groundCheckRadius, Vector3.down, 1000.0f, groundCheckMask));
-            hits.Sort((a, b) => a.distance > b.distance ? 1 : -1);
-
+            List<RaycastHit> hits = new List<RaycastHit>(Physics.SphereCastAll(rigidbody.position + Vector3.up * groundCheckRadius, groundCheckRadius, Vector3.down, springDistance, groundCheckMask));
+            
             RaycastHit? hit = null;
             foreach (var other in hits)
             {
-                if (!other.rigidbody)
-                {
-                    hit = other;
-                    break;
-                }
-                if (other.rigidbody != rigidbody)
-                {
-                    hit = other;
-                    break;
-                }
+                if (other.rigidbody == rigidbody) continue;
+
+                if (hit.HasValue) hit = GetBetterHit(hit.Value, other);
+                else hit = other;
             }
 
             if (hit.HasValue)
@@ -176,6 +169,18 @@ namespace BoschingMachine.Bipedal
                 GroundNormal = Vector3.zero;
                 return float.PositiveInfinity;
             }
+        }
+
+        public RaycastHit GetBetterHit (RaycastHit a, RaycastHit b)
+        {
+            if (!a.rigidbody) return a;
+            if (!b.rigidbody) return b;
+
+            if (a.rigidbody.isKinematic) return a;
+            if (b.rigidbody.isKinematic) return b;
+
+            if (a.rigidbody.mass == b.rigidbody.mass) return a.distance < b.distance ? a : b;
+            else return a.rigidbody.mass > b.rigidbody.mass ? a : b;
         }
 
         public void Look(Rigidbody rigidbody, Transform head, Vector2 lookRotation)

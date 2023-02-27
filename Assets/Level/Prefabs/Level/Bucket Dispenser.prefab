@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c063bbe3bb2496f48869d98f458323a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactTime: 1
+  interactTime: 0.1
   prefab: {fileID: 6923104121110766994, guid: 2889156070e6fa64c848cd88a99c8f04, type: 3}
   spawnpoint: {fileID: 8451181761375790984}
   itemName: Bucket

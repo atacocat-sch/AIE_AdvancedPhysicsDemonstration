@@ -36,10 +36,9 @@ namespace BoschingMachine.Interactables
                 }
             }
 
-            if (interactPercent < 1.0f)
+            if (interactPercent < 1.0f && interactTime > Time.deltaTime)
             {
-                if (interactTime > 0.0f) interactPercent += Time.deltaTime / interactTime;
-                else interactPercent = 0.0f;
+                interactPercent += Time.deltaTime / interactTime;
                 
                 InteractTick(biped, interactPercent);
                 partialCallback?.Invoke(interactPercent);

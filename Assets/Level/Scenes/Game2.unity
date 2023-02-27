@@ -2676,34 +2676,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 7450225309706915811, guid: a8e692d9cf1431d4189b6430eb4d2e51, type: 3}
-      propertyPath: pickerUpper.maxMoment
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7450225309706915811, guid: a8e692d9cf1431d4189b6430eb4d2e51, type: 3}
-      propertyPath: pickerUpper.springForce
-      value: 1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 7450225309706915811, guid: a8e692d9cf1431d4189b6430eb4d2e51, type: 3}
-      propertyPath: pickerUpper.springDamper
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 7450225309706915811, guid: a8e692d9cf1431d4189b6430eb4d2e51, type: 3}
-      propertyPath: pickerUpper.spring.damper
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 7450225309706915811, guid: a8e692d9cf1431d4189b6430eb4d2e51, type: 3}
-      propertyPath: pickerUpper.spring.constant
-      value: 1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 7450225309706915811, guid: a8e692d9cf1431d4189b6430eb4d2e51, type: 3}
-      propertyPath: pickerUpper.spring.maxForce
-      value: 600
-      objectReference: {fileID: 0}
-    - target: {fileID: 7450225309706915811, guid: a8e692d9cf1431d4189b6430eb4d2e51, type: 3}
-      propertyPath: pickerUpper.spring.intergral
-      value: -100
-      objectReference: {fileID: 0}
     - target: {fileID: 7450225310659661439, guid: a8e692d9cf1431d4189b6430eb4d2e51, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -3241,7 +3213,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1740893650}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.43475273, y: 0.7819246, z: -5.09867}
+  m_LocalPosition: {x: -1.4347527, y: 0.7819246, z: -5.09867}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3700,6 +3672,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2239703247976055816, guid: 2889156070e6fa64c848cd88a99c8f04, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6923104121110766994, guid: 2889156070e6fa64c848cd88a99c8f04, type: 3}
       propertyPath: m_Name
       value: Bucket
