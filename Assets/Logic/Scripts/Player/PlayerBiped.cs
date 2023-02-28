@@ -20,6 +20,7 @@ namespace BoschingMachine.Player
         [Space]
         [SerializeField] float lookDeltaSensitivity;
         [SerializeField] float lookAdditiveSensitivity;
+        [SerializeField] PlayerCameraAnimator camAnimator;
 
         [Space]
         [SerializeField] Interactor interactor;
@@ -150,12 +151,14 @@ namespace BoschingMachine.Player
 
             interactor.FixedUpdate();
 
-            pickerUpper.FixedProcess(Rigidbody, holdTarget);
+            pickerUpper.FixedProcess(this, holdTarget);
         }
 
         protected override void LateUpdate()
         {
             base.LateUpdate();
+
+            camAnimator.Update(this);
         }
 
         private Vector2 GetLookDelta()

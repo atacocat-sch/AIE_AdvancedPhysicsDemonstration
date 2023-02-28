@@ -1,3 +1,4 @@
+using BoschingMachine.Animbites;
 using BoschingMachine.Bipedal;
 using UnityEngine;
 
@@ -19,6 +20,9 @@ namespace BoschingMachine.Interactables
 
         [Space]
         [SerializeField] Bounds clogBounds;
+
+        [Space]
+        [SerializeField] SquashAnimbite squash;
 
         float timer;
         bool cloged;
@@ -84,10 +88,13 @@ namespace BoschingMachine.Interactables
         {
             if (usesLeft > 0 || !limitDeployment)
             {
-                Instantiate(prefab, spawnpoint.position, spawnpoint.rotation);
+                var instance = Instantiate(prefab, spawnpoint.position, spawnpoint.rotation);
+                instance.name = prefab.name;
                 usesLeft--;
                 cloged = true;
                 timer = 0.0f;
+
+                squash.Play(this, transform);
             }
         }
 

@@ -1,5 +1,9 @@
 using BoschingMachine.Bipedal;
 using UnityEngine;
+using UnityEngine.Rendering;
+using System.Linq;
+using System.Collections.Generic;
+using BoschingMachine.Tags;
 
 namespace BoschingMachine.Player.Modules
 {
@@ -18,58 +22,71 @@ namespace BoschingMachine.Player.Modules
 
         [Space]
         [SerializeField] LineRenderer lines;
+        [SerializeField] float lineVolume;
+        [SerializeField] PlayerPickerUpperUI ui;
+        [SerializeField] Tag ignoreTag;
 
-        Rigidbody heldObject;
+        public Rigidbody HeldObject { get; private set; }
+        public Rigidbody LookingAt { get; private set; }
 
-        public void FixedProcess(Rigidbody rigidbody, Transform holdTarget)
+        public void FixedProcess(Biped biped, Transform holdTarget)
         {
-            if (!heldObject) return;
+            TryGetLookingAt(biped);
 
-            Vector3 vec = holdTarget.position - heldObject.position;
+            if (!HeldObject) return;
+
+            Vector3 vec = holdTarget.position - HeldObject.position;
 
             if (vec.sqrMagnitude > maxDistance * maxDistance)
             {
-                heldObject = null;
+                HeldObject = null;
                 return;
             }
 
-            spring.Drive(heldObject, rigidbody, holdTarget.position);
+            spring.Drive(HeldObject, biped.Rigidbody, holdTarget.position);
 
-            heldObject.AddTorque(-heldObject.angularVelocity * rotationDamper);
+            HeldObject.AddTorque(-HeldObject.angularVelocity * rotationDamper);
         }
 
         public void Update(Transform holdTarget)
         {
-            if (heldObject)
+            if (HeldObject)
             {
                 lines.enabled = true;
-                lines.SetPosition(0, heldObject.position);
-                lines.SetPosition(1, holdTarget.position);
+
+                int segments = 16;
+                lines.positionCount = segments;
+                for (int i = 0; i < segments; i++)
+                {
+                    var p = i / (segments - 1.0f);
+                    lines.SetPosition(i, Vector3.Lerp(HeldObject.position, holdTarget.position, p));
+                }
+
+                float distance = (HeldObject.position - holdTarget.position).magnitude;
+                float factor = Mathf.Sqrt(lineVolume / distance);
+                if (factor > 1.0f) factor = 1.0f;
+
+                lines.widthCurve.MoveKey(1, new Keyframe(0.5f, factor));
             }
             else
             {
                 lines.enabled = false;
             }
+
+            ui.Update(this);
         }
 
         public bool TryGrabOrDrop(Biped biped)
         {
-            if (heldObject)
+            if (HeldObject)
             {
-                heldObject = null;
+                HeldObject = null;
                 return true;
             }
-            else
+            else if (LookingAt)
             {
-                Ray ray = new Ray(biped.Head.position, biped.Head.forward);
-                if (Physics.Raycast(ray, out var hit, grabRange))
-                {
-                    if (hit.rigidbody)
-                    {
-                        heldObject = hit.rigidbody;
-                        return true;
-                    }
-                }
+                HeldObject = LookingAt;
+                return true;
             }
 
             return false;
@@ -77,16 +94,35 @@ namespace BoschingMachine.Player.Modules
 
         public bool Throw(Biped biped)
         {
-            if (!heldObject) return false;
+            if (!HeldObject) return false;
 
-            Vector3 throwForce = biped.Head.forward * throwSpeed * heldObject.mass;
+            Vector3 throwForce = biped.Head.forward * throwSpeed * HeldObject.mass;
             throwForce = Vector3.ClampMagnitude(throwForce, spring.maxForce);
 
-            heldObject.AddForce(throwForce, ForceMode.Impulse);
-            heldObject.gameObject.AddComponent<MovingInterest>();
-            heldObject = null;
+            HeldObject.AddForce(throwForce, ForceMode.Impulse);
+            HeldObject.gameObject.AddComponent<MovingInterest>();
+            HeldObject = null;
 
             return true;
+        }
+
+        public void TryGetLookingAt(Biped biped)
+        {
+            LookingAt = null;
+
+            Ray ray = new Ray(biped.Head.position, biped.Head.forward);
+
+            var results = Physics.RaycastAll(ray, grabRange).OrderBy(a => a.distance).Where(a => !a.transform.HasTag(ignoreTag));
+
+            if (results.Count() == 0) return;
+
+            var hit = results.First();
+
+            if (!hit.rigidbody) return;
+            if (hit.rigidbody.isKinematic) return;
+
+            LookingAt = hit.rigidbody;
+            return;
         }
     }
 }

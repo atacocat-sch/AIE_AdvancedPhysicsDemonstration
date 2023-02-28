@@ -13,6 +13,7 @@ namespace BoschingMachine
         public Vector3 Velocity { get; set; }
         public float Mass { get; set; } = 1.0f;
 
+        public void Update(float target, float dt) => Update(Vector3.right * target, dt);
         public void Update (Vector3 target, float dt)
         {
             var diff = target - Position;
