@@ -90,7 +90,7 @@ namespace BoschingMachine.Bipedal
             {
                 float contraction = 1.0f - (DistanceToGround + springDistance) / springDistance;
                 Vector3 moment = Vector3.up * contraction * springForce;
-                moment -= Vector3.up * rigidbody.velocity.y * springDamper;
+                moment -= Vector3.up * RelativeVelocity(rigidbody).y * springDamper;
 
                 AddMomentToSelfAndGround(rigidbody, moment);
             }

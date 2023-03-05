@@ -6,38 +6,29 @@ using UnityEngine;
 
 namespace BoschingMachine
 {
-    public class Elevator : Interactable
+    public class Elevator : MonoBehaviour, IElevatorDriver
     {
         [SerializeField] Vector3[] floors;
         [SerializeField] float smoothTime;
         [SerializeField] float maxSpeed;
         [SerializeField] float threshold = 0.1f;
-
-        int floor;
-        int direction;
+        [SerializeField] int startingFloor;
+ 
         new Rigidbody rigidbody;
         Vector3 velocity;
         bool stopped;
 
-        public override bool CanInteract => stopped;
-
-        protected override void FinishInteract(Biped biped)
-        {
-            if (floor + direction >= floors.Length) direction = -1;
-            if (floor + direction < 0) direction = 1;
-
-            floor += direction;
-        }
+        public int Floor { get; private set; }
+        public Vector3[] Floors => floors;
 
         private void Awake()
         {
             rigidbody = GetComponent<Rigidbody>();
-            direction = 1;
         }
 
         private void FixedUpdate()
         {
-            Vector3 floorPoint = floors[floor];
+            Vector3 floorPoint = floors[Floor];
             stopped = (floorPoint - rigidbody.position).sqrMagnitude < threshold * threshold;
             
             if (stopped)
@@ -48,11 +39,6 @@ namespace BoschingMachine
             {
                 rigidbody.MovePosition(Vector3.SmoothDamp(rigidbody.position, floorPoint, ref velocity, smoothTime, maxSpeed));
             }
-        }
-
-        public override string BuildInteractString(string passthrough = "")
-        {
-            return "Move Elevator";
         }
 
         private void OnDrawGizmos()
@@ -66,5 +52,16 @@ namespace BoschingMachine
                 Gizmos.DrawLine(a, b);
             }
         }
+
+        public void Call(int floor)
+        {
+            Floor = floor;
+        }
+    }
+
+    public interface IElevatorDriver
+    {
+        int Floor { get; }
+        void Call(int floor);
     }
 }

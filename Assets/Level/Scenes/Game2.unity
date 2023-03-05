@@ -1745,7 +1745,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 582f36c7361f16341a1859b52c26989a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactTime: 1
   floors:
   - {x: 21, y: 0, z: 16}
   - {x: 21, y: 76.5, z: 16}
