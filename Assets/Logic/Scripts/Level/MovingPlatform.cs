@@ -1,6 +1,4 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem.DualShock;
 
 namespace BoschingMachine.Level
 {

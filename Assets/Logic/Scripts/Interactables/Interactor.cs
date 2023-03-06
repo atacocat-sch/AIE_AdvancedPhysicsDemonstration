@@ -23,6 +23,8 @@ namespace BoschingMachine
 
         public void Update(Biped biped, bool use)
         {
+            TryGetLookingAt(biped, out _);
+            
             uiHandler.UpdateUI(this, biped);
             if (use)
             {
@@ -47,7 +49,8 @@ namespace BoschingMachine
             Ray ray = new Ray(biped.Head.position, biped.Head.forward);
             if (Physics.Raycast(ray, out var hit, interactRange))
             {
-                if (hit.transform.TryGetComponent(out interactable))
+                interactable = hit.collider.GetComponentInParent<Interactable>();
+                if (interactable)
                 {
                     return true;
                 }

@@ -1,8 +1,6 @@
 using BoschingMachine.Bipedal;
 using UnityEngine;
-using UnityEngine.Rendering;
 using System.Linq;
-using System.Collections.Generic;
 using BoschingMachine.Tags;
 
 namespace BoschingMachine.Player.Modules
