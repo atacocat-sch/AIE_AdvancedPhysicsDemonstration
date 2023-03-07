@@ -98,7 +98,6 @@ namespace BoschingMachine.Player.Modules
             throwForce = Vector3.ClampMagnitude(throwForce, spring.maxForce);
 
             HeldObject.AddForce(throwForce, ForceMode.Impulse);
-            HeldObject.gameObject.AddComponent<MovingInterest>();
             HeldObject = null;
 
             return true;

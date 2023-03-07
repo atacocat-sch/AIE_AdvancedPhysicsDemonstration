@@ -11,7 +11,7 @@ namespace BoschingMachine.Interactables
 
         public float InteractTime => interactTime;
         public float GetInteractPercent(Biped biped) => biped == user ? interactPercent : 0.0f;
-        public abstract bool CanInteract { get; }
+        public virtual bool CanInteract => true;
 
         protected virtual string InoperableAppend => "Inoperable";
 
@@ -36,26 +36,28 @@ namespace BoschingMachine.Interactables
                 }
             }
 
-            if (interactPercent < 1.0f && interactTime > Time.deltaTime)
+            if (interactPercent < 1.0f)
             {
-                interactPercent += Time.deltaTime / interactTime;
-                
+                if (interactTime < Time.deltaTime) interactPercent = 1.0f;
+                else interactPercent += Time.deltaTime / interactTime;
+
                 InteractTick(biped, interactPercent);
                 partialCallback?.Invoke(interactPercent);
-            }
-            else
-            {
-                interactPercent = 0.0f;
 
-                FinishInteract(biped);
-                finishCallback?.Invoke();
+                if (interactPercent >= 1.0f)
+                {
+                    interactPercent = 1.0f;
+
+                    FinishInteract(biped);
+                    finishCallback?.Invoke();
+                }
             }
 
             useFrame = Time.frameCount;
             return true;
         }
 
-        public virtual void CancelInteract (Biped user)
+        public virtual void CancelInteract(Biped user)
         {
             if (user != this.user) return;
 
@@ -67,9 +69,9 @@ namespace BoschingMachine.Interactables
         protected virtual void InteractTick(Biped biped, float t) { }
         protected abstract void FinishInteract(Biped biped);
 
-        public virtual string BuildInteractString (string passthrough = "")
+        public virtual string BuildInteractString(string passthrough = "")
         {
-            return CanInteract? passthrough : TMPUtil.Color($"{passthrough} [{InoperableAppend}]", Color.gray);
+            return CanInteract ? passthrough : TMPUtil.Color($"{passthrough} [{InoperableAppend}]", Color.gray);
         }
     }
 }

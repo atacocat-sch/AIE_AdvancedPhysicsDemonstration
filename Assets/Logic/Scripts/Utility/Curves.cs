@@ -20,5 +20,7 @@ namespace BoschingMachine.Utility
 
             return 1 + c3 * Mathf.Pow(x - 1, 3) + c1 * Mathf.Pow(x - 1, 2);
         }
+
+        public static float Smootherdamp(float x) => x * x * x * (x * (x * 6.0f - 15.0f) + 10.0f);
     }
 }

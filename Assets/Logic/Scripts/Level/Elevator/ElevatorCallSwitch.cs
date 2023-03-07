@@ -13,19 +13,24 @@ namespace BoschingMachine.Elevators
         Elevator elevator;
         int index;
 
-        public override bool CanInteract => true;
+        public override bool CanInteract => elevator ? !elevator.HasFloorBeenRequested(index) : true;
         public int? IndexOverride { get; set; } = null;
 
         private void Start()
         {
+            elevator = GetComponentInParent<Elevator>();
+            elevatorGroup = GetComponentInParent<ElevatorGroup>();
             index = GetButtonCallIndex();
-            setupCallback.Invoke(Elevator.IndexToFloorName(index));
+            setupCallback.Invoke(Elevator.FormatIndex(index));
+        }
+
+        private void Update()
+        {
+            transform.localScale = new Vector3(1.0f, 1.0f, CanInteract ? 1.0f : 0.5f);
         }
 
         public int GetButtonCallIndex()
         {
-            LazyInit();
-
             if (IndexOverride.HasValue) return IndexOverride.Value;
 
             if (!elevatorGroup) return 0;
@@ -42,16 +47,10 @@ namespace BoschingMachine.Elevators
             return best;
         }
 
-        private void LazyInit()
-        {
-            if (!elevatorGroup) elevatorGroup = GetComponentInParent<ElevatorGroup>();
-            if (!elevator) elevator = GetComponentInParent<Elevator>();
-        }
-
         protected override string InoperableAppend => "En Route";
         public override string BuildInteractString(string passthrough = "")
         {
-            return base.BuildInteractString("Call Elevator");
+            return CanInteract ? base.BuildInteractString("Call Elevator") : string.Empty;
         }
 
         protected override void FinishInteract(Biped biped)

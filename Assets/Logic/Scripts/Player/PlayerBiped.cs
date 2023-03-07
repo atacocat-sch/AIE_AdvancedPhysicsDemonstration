@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using BoschingMachine.Bipedal;
 using BoschingMachine.Player.Modules;
 using BoschingMachine.Vitality;
+using BoschingMachine.Editor;
 
 namespace BoschingMachine.Player
 {
@@ -12,6 +13,9 @@ namespace BoschingMachine.Player
     {
         [Space]
         [SerializeField] InputActionAsset inputAsset;
+
+        [Space]
+        [SerializeField][Percent] float crouchSpeedPenalty;
 
         [Space]
         [SerializeField] PlayerPickerUpper pickerUpper;
@@ -42,11 +46,17 @@ namespace BoschingMachine.Player
 
         InputAction move;
         InputAction jump;
+        InputAction crouch;
         InputAction lookDelta;
         InputAction lookAdditive;
 
         InputAction throwObject;
         InputAction interact;
+
+        GameObject normalCollision;
+        GameObject crouchCollision;
+
+        bool crouched;
 
         public override Vector3 MoveDirection
         {
@@ -55,14 +65,25 @@ namespace BoschingMachine.Player
                 if (Frozen) return Vector2.zero;
 
                 Vector2 input = move.ReadValue<Vector2>();
-                return transform.TransformDirection(input.x, 0.0f, input.y);
+                return transform.TransformDirection(input.x, 0.0f, input.y) * SpeedPenalty;
             }
         }
 
-        public override bool Jump => ReadFlag(jump) && !Frozen;
+        public override bool Jump => Switch(jump) && !Frozen;
         public override Vector2 LookRotation => lookRotation;
         public float FOV { get; set; }
         public float ViewmodelFOV { get; set; }
+
+        public float SpeedPenalty
+        {
+            get
+            {
+                float s = 1.0f;
+                if (crouched) s *= crouchSpeedPenalty;
+                return s;
+            }
+        }
+
 
         protected override void Awake()
         {
@@ -73,6 +94,7 @@ namespace BoschingMachine.Player
 
             move = playerMap.FindAction("move");
             jump = playerMap.FindAction("jump");
+            crouch = playerMap.FindAction("crouch");
 
             throwObject = playerMap.FindAction("throw");
             interact = playerMap.FindAction("pickupAndDrop");
@@ -82,9 +104,13 @@ namespace BoschingMachine.Player
 
             lookDelta = persistantMap.FindAction("lookDelta");
             lookAdditive = persistantMap.FindAction("lookAdditive");
+
+            var collisionGroups = transform.Find("Collision Groups");
+            normalCollision = collisionGroups.GetChild(0).gameObject;
+            crouchCollision = collisionGroups.GetChild(1).gameObject;
         }
 
-        public bool ReadFlag(InputAction action) => action.ReadValue<float>() > 0.5f;
+        public bool Switch(InputAction action) => action.ReadValue<float>() > 0.5f;
 
         protected override void OnEnable()
         {
@@ -101,6 +127,8 @@ namespace BoschingMachine.Player
                 health.DeathEvent += OnDie;
             }
 
+            crouch.performed += Crouch;
+
             winSignal.RaiseEvent += OnWin;
         }
 
@@ -112,6 +140,8 @@ namespace BoschingMachine.Player
 
             interact.performed -= Interact;
             throwObject.performed -= Throw;
+
+            crouch.performed -= Crouch;
 
             winSignal.RaiseEvent -= OnWin;
         }
@@ -128,7 +158,7 @@ namespace BoschingMachine.Player
 
         protected override void Update()
         {
-            interactor.Update(this, ReadFlag(interact));
+            interactor.Update(this, Switch(interact));
             
             lookRotation += GetLookDelta();
             lookRotation.y = Mathf.Clamp(lookRotation.y, -90.0f, 90.0f);
@@ -149,9 +179,20 @@ namespace BoschingMachine.Player
         {
             base.FixedUpdate();
 
+            CrouchAction();
+
             interactor.FixedUpdate();
 
             pickerUpper.FixedProcess(this, holdTarget);
+        }
+
+        private void CrouchAction()
+        {
+            if (Jump) crouched = false;
+
+            normalCollision.SetActive(!crouched);
+            crouchCollision.SetActive(crouched);
+            camAnimator.Crouched = crouched;
         }
 
         protected override void LateUpdate()
@@ -172,6 +213,8 @@ namespace BoschingMachine.Player
 
             return input;
         }
+
+        private void Crouch(InputAction.CallbackContext c) => crouched = !crouched;
 
         public void Interact (InputAction.CallbackContext _)
         {

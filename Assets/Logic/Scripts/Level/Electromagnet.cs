@@ -15,8 +15,6 @@ namespace BoschingMachine
         [SerializeField] bool active;
         [SerializeField] Tag magneticTag;
 
-        public override bool CanInteract => true;
-
         float Radius => Mathf.Sqrt(constant / minForce);
         Vector3 PoleMin => transform.TransformPoint(poleMinOffset);
         Vector3 PoleMax => transform.TransformPoint(poleMaxOffset);

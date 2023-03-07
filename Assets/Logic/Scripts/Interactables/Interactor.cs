@@ -23,8 +23,6 @@ namespace BoschingMachine
 
         public void Update(Biped biped, bool use)
         {
-            TryGetLookingAt(biped, out _);
-            
             uiHandler.UpdateUI(this, biped);
             if (use)
             {
@@ -110,8 +108,13 @@ namespace BoschingMachine
 
             if (interactable)
             {
-                label.text = interactable.BuildInteractString();
-                progressBar.transform.localScale = new Vector3(interactable.GetInteractPercent(biped), 1.0f, 1.0f);
+                var text = interactable.BuildInteractString();
+                if (!string.IsNullOrEmpty(text))
+                {
+                    label.text = interactable.BuildInteractString();
+                    progressBar.transform.localScale = new Vector3(interactable.GetInteractPercent(biped), 1.0f, 1.0f);
+                }
+                else springTarget = 0.0f;
             }
             else springTarget = 0.0f;
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace BoschingMachine.Elevators
@@ -7,41 +8,94 @@ namespace BoschingMachine.Elevators
     {
         [SerializeField] float[] floors;
 
+        bool[] requests;
         public float[] Floors => floors;
-        public bool[] Requests { get; private set; }
 
         public List<Elevator> Elevators { get; } = new();
 
         private void Awake()
         {
-            Requests = new bool[floors.Length];
+            requests = new bool[floors.Length];
         }
 
         private void Update()
         {
-            if (Requests.Length != floors.Length)
+            foreach (var elevator in Elevators)
             {
-                var old = Requests;
-                Requests = new bool[floors.Length];
-                for (int i = 0; i < old.Length && i < Requests.Length; i++)
+                elevator.ResetRequests();
+            }
+
+            void DoRequest(int i)
+            {
+                if (!requests[i]) return;
+
+                foreach (var elevator in Elevators)
                 {
-                    Requests[i] = old[i];
+                    if (elevator.CurrentFloor == i && elevator.State == Elevator.ElevatorState.Boarding)
+                    {
+                        requests[i] = false;
+                        return;
+                    }
+                    if (elevator.TargetFloor == i && elevator.State != Elevator.ElevatorState.Idle)
+                    {
+                        elevator.Requests[i] = true;
+                        return;
+                    }
                 }
+
+                var best = Elevators.Where(e => e.CurrentFloor == i && e.State != Elevator.ElevatorState.Moving).Lowest(e => Mathf.Abs(i - e.CurrentFloor));
+                if (!best) best = Elevators.Where(e => e.IsFloorOnCurrentPath(i)).Lowest(e => Mathf.Abs(i - e.CurrentFloor));
+                if (!best) best = Elevators.Where(e => e.State == Elevator.ElevatorState.Idle).Lowest(e => Mathf.Abs(i - e.CurrentFloor));
+                if (!best) return;
+
+                best.Requests[i] = true;
+            }
+
+            for (int i = 0; i < requests.Length; i++)
+            {
+                DoRequest(i);
             }
         }
 
         private void OnDrawGizmos()
         {
+#if UNITY_EDITOR
+            if (UnityEditor.Selection.Contains(gameObject)) return;
+#endif
+            DrawGizmos(Gizmos.DrawWireCube, 0.2f);
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            DrawGizmos(Gizmos.DrawWireCube);
+            DrawGizmos(Gizmos.DrawCube, 0.2f);
+        }
+
+        private void DrawGizmos(System.Action<Vector3, Vector3> drawAction, float alpha = 1.0f)
+        {
+            Gizmos.color = new Color(1.0f, 0.7529411764705882f, 0.0705882352941176f, alpha);
+
+            var elevators = GetComponentsInChildren<Elevator>();
+            Bounds bounds = new Bounds(elevators[0].transform.position, Vector3.zero);
+            foreach (var elevator in elevators)
+            {
+                bounds.Encapsulate(elevator.transform.position);
+            }
+
             if (floors == null) return;
             foreach (var floor in floors)
             {
-                Gizmos.DrawCube(HeightToPoint(floor), new Vector3(1, 0, 1));
+                drawAction(new Vector3(bounds.center.x, floor, bounds.center.z), new Vector3(3.0f + bounds.size.x, 0, 3.0f + bounds.size.z));
             }
+
+            Gizmos.DrawLine(
+                new Vector3(bounds.center.x, Floors[0], bounds.center.z),
+                new Vector3(bounds.center.x, Floors[Floors.Length - 1], bounds.center.z));
         }
 
         public void Request(int i)
         {
-            Requests[i] = true;   
+            requests[i] = true;
         }
 
         public Vector3 HeightToPoint(float h) => new Vector3(transform.position.x, h, transform.position.z);

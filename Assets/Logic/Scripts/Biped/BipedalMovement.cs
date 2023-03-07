@@ -1,3 +1,4 @@
+using BoschingMachine.Editor;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ namespace BoschingMachine.Bipedal
         [SerializeField] float decelerationTime = 0.06f;
 
         [Space]
-        [SerializeField] float airAccelerationPenalty = 0.2f;
+        [SerializeField][Percent] float airAccelerationPenalty = 0.2f;
 
         [Space]
         [SerializeField] float jumpHeight = 2.5f;
@@ -79,8 +80,8 @@ namespace BoschingMachine.Bipedal
             if (!IsGrounded) return;
             if (!GroundRigidbody) return;
 
-            Vector3 force = (GroundVelocity - lastGroundVelocity) / Time.deltaTime;
-            rigidbody.AddForce(force, ForceMode.Acceleration);
+            Vector3 force = GroundVelocity - lastGroundVelocity;
+            rigidbody.AddForce(force, ForceMode.VelocityChange);
         }
 
         private void ApplySpring(Rigidbody rigidbody)
@@ -151,7 +152,7 @@ namespace BoschingMachine.Bipedal
         {
             Vector3 force = moment * self.mass;
             self.AddForce(force, forceMode);
-            if (GroundRigidbody && IsGrounded)
+            if (GroundRigidbody && IsGrounded && false)
             {
                 GroundRigidbody.AddForce(-force, forceMode);
             }

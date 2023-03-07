@@ -1,18 +1,28 @@
+using BoschingMachine.SignalGroups;
 using UnityEngine;
 
 namespace BoschingMachine
 {
-    public class FieldGenerator : MonoBehaviour, IStateDrivable
+    public class FieldGenerator : MonoBehaviour
     {
-        [SerializeField] Transform fieldTransform;
-        [SerializeField] new Collider collider;
         [SerializeField] float smoothTime;
-        [SerializeField] bool state;
+        
+        Transform fieldTransform;
+        SignalGroup signalGroup;
+        new Collider collider;
 
         float openPercent;
         float velocity;
 
-        public bool State { get => state; set => state = value; }
+        public bool State => signalGroup.StateB;
+
+        private void Awake()
+        {
+            signalGroup = SignalGroup.GetOrCreate(gameObject);
+            collider = GetComponentInChildren<Collider>();
+
+            fieldTransform = transform.DeepFind("field");
+        }
 
         private void OnEnable()
         {
@@ -22,7 +32,7 @@ namespace BoschingMachine
         private void Update()
         {
             openPercent = Mathf.SmoothDamp(openPercent, State ? 1 : 0, ref velocity, smoothTime);
-            collider.enabled = state;
+            collider.enabled = State;
 
             fieldTransform.localScale = new Vector3(1.0f, openPercent, 1.0f);
         }

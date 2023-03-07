@@ -31,28 +31,10 @@ namespace BoschingMachine.Editor
             {
                 for (int i = 0; i < target.Floors.Length; i++)
                 {
-                    if (GUILayout.Button($"Goto {Elevator.IndexToFloorName(i)}"))
+                    if (GUILayout.Button($"Goto {Elevator.FormatIndex(i)}"))
                     {
                         target.Request(i);
                     }
-                }
-            }
-
-            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-            {
-                bool none = true;
-                for (int i = 0; i < target.Floors.Length; i++)
-                {
-                    if (target.Requests[i])
-                    {
-                        GUILayout.Label($"Request for Floor {Elevator.IndexToFloorName(i)}");
-                        none = false;
-                    }
-                }
-
-                if (none)
-                {
-                    GUILayout.Label($"Requests Empty");
                 }
             }
         }
