@@ -1,31 +1,34 @@
-using BoschingMachine.Animbites;
-using BoschingMachine.Bipedal;
+using BoschingMachine.Logic.Scripts.Animbites;
+using BoschingMachine.Logic.Scripts.Utility;
 using UnityEngine;
 
-namespace BoschingMachine.Interactables
+namespace BoschingMachine.Logic.Scripts.Interactables
 {
     public class Dispenser : Interactable
     {
-        [SerializeField] GameObject prefab;
-        [SerializeField] Transform spawnpoint;
-        [SerializeField] string itemName;
-        [SerializeField] string itemPlural;
+        [SerializeField] private GameObject prefab;
+        [SerializeField] private Transform spawnpoint;
+        [SerializeField] private string itemName;
+        [SerializeField] private string itemPlural;
 
         [Space]
-        [SerializeField] bool limitDeployment;
-        [SerializeField] int capacity;
-        [SerializeField] int usesLeft;
-        [SerializeField] float rechargeTime;
-        [SerializeField] int rechargeCount;
+        [SerializeField]
+        private bool limitDeployment;
+        [SerializeField] private int capacity;
+        [SerializeField] private int usesLeft;
+        [SerializeField] private float rechargeTime;
+        [SerializeField] private int rechargeCount;
 
         [Space]
-        [SerializeField] Bounds clogBounds;
+        [SerializeField]
+        private Bounds clogBounds;
 
         [Space]
-        [SerializeField] SquashAnimbite squash;
+        [SerializeField]
+        private SquashAnimbite squash;
 
-        float timer;
-        bool cloged;
+        private float timer;
+        private bool cloged;
 
         public override bool CanInteract
         {
@@ -40,7 +43,7 @@ namespace BoschingMachine.Interactables
 
         protected override string InoperableAppend => $"Out of {Plural}";
 
-        string Plural => string.IsNullOrEmpty(itemPlural) ? $"{itemName}s" : itemPlural;
+        private string Plural => string.IsNullOrEmpty(itemPlural) ? $"{itemName}s" : itemPlural;
 
         private void Update()
         {
@@ -84,7 +87,7 @@ namespace BoschingMachine.Interactables
             return false;
         }
 
-        protected override void FinishInteract(Biped biped)
+        protected override void FinishInteract(Biped.Biped biped)
         {
             if (usesLeft > 0 || !limitDeployment)
             {

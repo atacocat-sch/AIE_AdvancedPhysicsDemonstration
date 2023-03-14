@@ -1,17 +1,16 @@
-using BoschingMachine.Bipedal;
-using BoschingMachine.Interactables;
+using BoschingMachine.Logic.Scripts.Interactables;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace BoschingMachine.Elevators
+namespace BoschingMachine.Logic.Scripts.Level.Elevator
 {
     public class ElevatorCallSwitch : Interactable
     {
-        [SerializeField] UnityEvent<string> setupCallback;
+        [SerializeField] private UnityEvent<string> setupCallback;
 
-        ElevatorGroup elevatorGroup;
-        Elevator elevator;
-        int index;
+        private ElevatorGroup elevatorGroup;
+        private Elevator elevator;
+        private int index;
 
         public override bool CanInteract => elevator ? !elevator.HasFloorBeenRequested(index) : true;
         public int? IndexOverride { get; set; } = null;
@@ -36,7 +35,7 @@ namespace BoschingMachine.Elevators
             if (!elevatorGroup) return 0;
 
             var best = 0;
-            for (int i = 1; i < elevatorGroup.Floors.Length; i++)
+            for (var i = 1; i < elevatorGroup.Floors.Length; i++)
             {
                 var d1 = Mathf.Abs(elevatorGroup.Floors[i] - transform.position.y);
                 var d2 = Mathf.Abs(elevatorGroup.Floors[best] - transform.position.y);
@@ -53,7 +52,7 @@ namespace BoschingMachine.Elevators
             return CanInteract ? base.BuildInteractString("Call Elevator") : string.Empty;
         }
 
-        protected override void FinishInteract(Biped biped)
+        protected override void FinishInteract(Biped.Biped biped)
         {
             if (elevator) elevator.Request(index);
             else elevatorGroup.Request(index);

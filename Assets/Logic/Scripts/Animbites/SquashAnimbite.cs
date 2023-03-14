@@ -1,15 +1,15 @@
 using System.Collections;
 using UnityEngine;
 
-namespace BoschingMachine.Animbites
+namespace BoschingMachine.Logic.Scripts.Animbites
 {
     [System.Serializable]
     public class SquashAnimbite
     {
-        [SerializeField] AnimationCurve curve;
-        [SerializeField][Range(0.0f, 1.0f)] float strength;
-        [SerializeField] float duration;
-        [SerializeField] Vector3 axis;
+        [SerializeField] private AnimationCurve curve;
+        [SerializeField][Range(0.0f, 1.0f)] private float strength;
+        [SerializeField] private float duration;
+        [SerializeField] private Vector3 axis;
 
         public void Play (MonoBehaviour behaviour, Transform target)
         {
@@ -18,16 +18,16 @@ namespace BoschingMachine.Animbites
 
         public IEnumerator Play (Transform target)
         {
-            Vector3 originalScale = target.localScale;
-            Vector3 axis = this.axis.normalized;
+            var originalScale = target.localScale;
+            var axis = this.axis.normalized;
 
-            float percent = 0.0f;
+            var percent = 0.0f;
             while (percent < 1.0f)
             {
-                float vScale = 1.0f + curve.Evaluate(percent) * strength;
-                float hScale = Mathf.Sqrt(1 / vScale);
+                var vScale = 1.0f + curve.Evaluate(percent) * strength;
+                var hScale = Mathf.Sqrt(1 / vScale);
 
-                Vector3 scale = Vector3.one * hScale;
+                var scale = Vector3.one * hScale;
                 scale += axis * (vScale - Vector3.Dot(axis, scale));
 
                 target.localScale = Vector3.Scale(originalScale, scale);

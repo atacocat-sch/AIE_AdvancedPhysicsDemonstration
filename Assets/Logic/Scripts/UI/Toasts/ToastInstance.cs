@@ -1,14 +1,14 @@
 using System.Collections;
-using BoschingMachine.Utility;
+using BoschingMachine.Logic.Scripts.Utility;
 using TMPro;
 using UnityEngine;
 
-namespace BoschingMachine.UI.Toasts
+namespace BoschingMachine.Logic.Scripts.UI.Toasts
 {
     public sealed class ToastInstance
     {
-        const float duration = 5.0f;
-        const float animateTime = 0.4f;
+        private const float duration = 5.0f;
+        private const float animateTime = 0.4f;
         
         public string message;
         public float time;
@@ -30,7 +30,7 @@ namespace BoschingMachine.UI.Toasts
 
         public IEnumerator Loop(System.Action<ToastInstance> finishCallback)
         {
-            float percent = 0.0f;
+            var percent = 0.0f;
             while (percent < 1.0f)
             {
                 AnimateIn(percent);
@@ -53,13 +53,13 @@ namespace BoschingMachine.UI.Toasts
 
         public void AnimateIn(float p)
         {
-            float s = Curves.EaseOutBack(p);
+            var s = Curves.EaseOutBack(p);
             textObject.transform.localScale = Vector3.one * s;
         }
 
         public void AnimateOut(float p)
         {
-            float s = Curves.EaseOutBack(1.0f - p);
+            var s = Curves.EaseOutBack(1.0f - p);
             textObject.transform.localScale = Vector3.one * s;
         }
 

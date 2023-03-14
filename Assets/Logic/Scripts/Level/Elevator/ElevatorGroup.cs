@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
+using BoschingMachine.Logic.Scripts.Utility;
 using UnityEngine;
 
-namespace BoschingMachine.Elevators
+namespace BoschingMachine.Logic.Scripts.Level.Elevator
 {
     public class ElevatorGroup : MonoBehaviour
     {
-        [SerializeField] float[] floors;
+        [SerializeField] private float[] floors;
 
-        bool[] requests;
+        private bool[] requests;
         public float[] Floors => floors;
 
         public List<Elevator> Elevators { get; } = new();
@@ -51,7 +52,7 @@ namespace BoschingMachine.Elevators
                 best.Requests[i] = true;
             }
 
-            for (int i = 0; i < requests.Length; i++)
+            for (var i = 0; i < requests.Length; i++)
             {
                 DoRequest(i);
             }
@@ -76,7 +77,7 @@ namespace BoschingMachine.Elevators
             Gizmos.color = new Color(1.0f, 0.7529411764705882f, 0.0705882352941176f, alpha);
 
             var elevators = GetComponentsInChildren<Elevator>();
-            Bounds bounds = new Bounds(elevators[0].transform.position, Vector3.zero);
+            var bounds = new Bounds(elevators[0].transform.position, Vector3.zero);
             foreach (var elevator in elevators)
             {
                 bounds.Encapsulate(elevator.transform.position);

@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BoschingMachine.Tags
+namespace BoschingMachine.Logic.Scripts.Tags
 {
     [CreateAssetMenu(menuName = "Scriptable Objects/Tags/Tag")]
     public class Tag : ScriptableObject
     {
-        static Dictionary<Tag, List<TagHolder>> TagMap { get; } = new();
-        static HashSet<TagHolder> Registered { get; } = new();
+        private static Dictionary<Tag, List<TagHolder>> TagMap { get; } = new();
+        private static HashSet<TagHolder> Registered { get; } = new();
 
         public static void Register (TagHolder holder)
         {

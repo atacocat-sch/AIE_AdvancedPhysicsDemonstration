@@ -1,25 +1,24 @@
-using BoschingMachine.Bipedal;
-using BoschingMachine.Interactables;
-using BoschingMachine.Tags;
+using BoschingMachine.Logic.Scripts.Interactables;
+using BoschingMachine.Logic.Scripts.Tags;
 using UnityEngine;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts.Level
 {
     public class Electromagnet : Interactable
     {
-        [SerializeField] Vector3 poleMinOffset;
-        [SerializeField] Vector3 poleMaxOffset;
-        [SerializeField] float constant;
-        [SerializeField] float minForce;
-        [SerializeField] float maxForce;
-        [SerializeField] bool active;
-        [SerializeField] Tag magneticTag;
+        [SerializeField] private Vector3 poleMinOffset;
+        [SerializeField] private Vector3 poleMaxOffset;
+        [SerializeField] private float constant;
+        [SerializeField] private float minForce;
+        [SerializeField] private float maxForce;
+        [SerializeField] private bool active;
+        [SerializeField] private Tag magneticTag;
 
-        float Radius => Mathf.Sqrt(constant / minForce);
-        Vector3 PoleMin => transform.TransformPoint(poleMinOffset);
-        Vector3 PoleMax => transform.TransformPoint(poleMaxOffset);
+        private float Radius => Mathf.Sqrt(constant / minForce);
+        private Vector3 PoleMin => transform.TransformPoint(poleMinOffset);
+        private Vector3 PoleMax => transform.TransformPoint(poleMaxOffset);
 
-        protected override void FinishInteract(Biped biped)
+        protected override void FinishInteract(Biped.Biped biped)
         {
             active = !active;
         }

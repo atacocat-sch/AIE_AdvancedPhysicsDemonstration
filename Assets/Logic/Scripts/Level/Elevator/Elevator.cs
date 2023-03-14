@@ -1,33 +1,32 @@
-using System;
 using System.Collections;
-using System.Net.Http;
 using UnityEngine;
 
-namespace BoschingMachine.Elevators
+namespace BoschingMachine.Logic.Scripts.Level.Elevator
 {
     public class Elevator : MonoBehaviour
     {
-        [SerializeField] float smoothTime;
-        [SerializeField] float maxSpeed;
-        [SerializeField] float threshold = 0.1f;
-        [SerializeField] int startingFloor;
-        [SerializeField] float waitTime;
+        [SerializeField] private float smoothTime;
+        [SerializeField] private float maxSpeed;
+        [SerializeField] private float threshold = 0.1f;
+        [SerializeField] private int startingFloor;
+        [SerializeField] private float waitTime;
 
         [Space]
-        [SerializeField] ElevatorDoor doors;
+        [SerializeField]
+        private ElevatorDoor doors;
 
-        new Rigidbody rigidbody;
+        private new Rigidbody rigidbody;
 
-        ElevatorGroup group;
+        private ElevatorGroup group;
 
-        float elevatorTarget;
-        float elevatorPosition;
-        float elevatorVelocity;
+        private float elevatorTarget;
+        private float elevatorPosition;
+        private float elevatorVelocity;
 
-        bool openDoors;
-        bool closeDoors;
+        private bool openDoors;
+        private bool closeDoors;
 
-        bool[] internalRequests;
+        private bool[] internalRequests;
 
         public bool[] Requests { get; private set; }
         public ElevatorState State { get; private set; }
@@ -92,7 +91,7 @@ namespace BoschingMachine.Elevators
                 TargetFloor = FindTargetFloor(MoveDirection);
                 elevatorTarget = group.Floors[TargetFloor];
 
-                float distance = Mathf.Abs(rigidbody.position.y - elevatorTarget);
+                var distance = Mathf.Abs(rigidbody.position.y - elevatorTarget);
                 moving = distance > threshold;
 
                 yield return null;
@@ -116,7 +115,7 @@ namespace BoschingMachine.Elevators
             State = ElevatorState.Boarding;
             internalRequests[TargetFloor] = false;
 
-            float timer = 0.0f;
+            var timer = 0.0f;
             while (timer < waitTime || !doors.DoorsClosed)
             {
                 doors.IsDoorOpen = timer < waitTime;
@@ -165,8 +164,8 @@ namespace BoschingMachine.Elevators
         private int FindTargetFloor(bool searchForward = true, bool searchBack = true)
         {
             var floors = group.Floors.Length;
-            bool requestExists = false;
-            for (int i = 0; i < floors; i++)
+            var requestExists = false;
+            for (var i = 0; i < floors; i++)
             {
                 if (Requests[i])
                 {
@@ -180,7 +179,7 @@ namespace BoschingMachine.Elevators
             var fForward = -1;
             var fBack = -1;
 
-            for (int i = CurrentFloor; i < floors && searchForward; i++)
+            for (var i = CurrentFloor; i < floors && searchForward; i++)
             {
                 if (Requests[i])
                 {
@@ -189,7 +188,7 @@ namespace BoschingMachine.Elevators
                 }
             }
 
-            for (int i = CurrentFloor; i >= 0 && searchBack; i--)
+            for (var i = CurrentFloor; i >= 0 && searchBack; i--)
             {
                 if (Requests[i])
                 {
@@ -211,7 +210,7 @@ namespace BoschingMachine.Elevators
 
         public void ResetRequests()
         {
-            for (int i = 0; i < Requests.Length; i++)
+            for (var i = 0; i < Requests.Length; i++)
             {
                 Requests[i] = internalRequests[i];
             }
@@ -226,11 +225,11 @@ namespace BoschingMachine.Elevators
 
         public int GetCurrentFloor()
         {
-            int best = 0;
-            for (int i = 0; i < group.Floors.Length; i++)
+            var best = 0;
+            for (var i = 0; i < group.Floors.Length; i++)
             {
-                float d1 = Mathf.Abs(group.Floors[i] - rigidbody.position.y);
-                float d2 = Mathf.Abs(group.Floors[best] - rigidbody.position.y);
+                var d1 = Mathf.Abs(group.Floors[i] - rigidbody.position.y);
+                var d2 = Mathf.Abs(group.Floors[best] - rigidbody.position.y);
 
                 if (d1 < d2) best = i;
             }
@@ -247,7 +246,7 @@ namespace BoschingMachine.Elevators
             if (State != ElevatorState.Moving) return false;
 
             f -= CurrentFloor;
-            int tf = TargetFloor - CurrentFloor;
+            var tf = TargetFloor - CurrentFloor;
 
             if (tf * f < 0) return false;
             return Mathf.Abs(f) < Mathf.Abs(tf);

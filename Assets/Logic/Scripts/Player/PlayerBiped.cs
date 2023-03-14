@@ -1,62 +1,71 @@
+using BoschingMachine.Logic.Scripts.Interactables;
+using BoschingMachine.Logic.Scripts.Meta;
+using BoschingMachine.Logic.Scripts.Signals;
+using BoschingMachine.Logic.Scripts.Vitallity;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using BoschingMachine.Bipedal;
-using BoschingMachine.Player.Modules;
-using BoschingMachine.Vitality;
-using BoschingMachine.Editor;
 
-namespace BoschingMachine.Player
+namespace BoschingMachine.Logic.Scripts.Player
 {
     [SelectionBase]
     [DisallowMultipleComponent]
-    public sealed class PlayerBiped : Biped
+    public sealed class PlayerBiped : Biped.Biped
     {
         [Space]
-        [SerializeField] InputActionAsset inputAsset;
+        [SerializeField]
+        private InputActionAsset inputAsset;
 
         [Space]
-        [SerializeField][Percent] float crouchSpeedPenalty;
+        [SerializeField][Percent]
+        private float crouchSpeedPenalty;
 
         [Space]
-        [SerializeField] PlayerPickerUpper pickerUpper;
-        [SerializeField] Transform holdTarget;
+        [SerializeField]
+        private PlayerPickerUpper pickerUpper;
+        [SerializeField] private Transform holdTarget;
 
         [Space]
-        [SerializeField] float lookDeltaSensitivity;
-        [SerializeField] float lookAdditiveSensitivity;
-        [SerializeField] PlayerCameraAnimator camAnimator;
+        [SerializeField]
+        private float lookDeltaSensitivity;
+        [SerializeField] private float lookAdditiveSensitivity;
+        [SerializeField] private PlayerCameraAnimator camAnimator;
 
         [Space]
-        [SerializeField] Interactor interactor;
+        [SerializeField]
+        private Interactor interactor;
 
         [Space]
-        [SerializeField] Rigidbody deadCamera;
-        [SerializeField] float deadCamForce;
-        [SerializeField] float deadCamTorque;
+        [SerializeField]
+        private Rigidbody deadCamera;
+        [SerializeField] private float deadCamForce;
+        [SerializeField] private float deadCamTorque;
 
         [Space]
-        [SerializeField] Signal winSignal;
+        [SerializeField]
+        private Signal winSignal;
 
         public Health health;
 
-        Vector2 lookRotation;
+        private Vector2 lookRotation;
 
-        InputActionMap playerMap;
-        InputActionMap persistantMap;
+        private InputActionMap playerMap;
+        private InputActionMap persistantMap;
 
-        InputAction move;
-        InputAction jump;
-        InputAction crouch;
-        InputAction lookDelta;
-        InputAction lookAdditive;
+        private InputAction move;
+        private InputAction jump;
+        private InputAction crouch;
+        private InputAction lookDelta;
+        private InputAction lookAdditive;
 
-        InputAction throwObject;
-        InputAction interact;
+        private InputAction throwObject;
+        private InputAction interact;
 
-        GameObject normalCollision;
-        GameObject crouchCollision;
+        private GameObject normalCollision;
+        private GameObject crouchCollision;
 
-        bool crouched;
+        private bool crouched;
+
+        private CursorLock.CursorReservation cursorReservation;
 
         public override Vector3 MoveDirection
         {
@@ -64,7 +73,7 @@ namespace BoschingMachine.Player
             {
                 if (Frozen) return Vector2.zero;
 
-                Vector2 input = move.ReadValue<Vector2>();
+                var input = move.ReadValue<Vector2>();
                 return transform.TransformDirection(input.x, 0.0f, input.y) * SpeedPenalty;
             }
         }
@@ -78,12 +87,11 @@ namespace BoschingMachine.Player
         {
             get
             {
-                float s = 1.0f;
+                var s = 1.0f;
                 if (crouched) s *= crouchSpeedPenalty;
                 return s;
             }
         }
-
 
         protected override void Awake()
         {
@@ -110,13 +118,14 @@ namespace BoschingMachine.Player
             crouchCollision = collisionGroups.GetChild(1).gameObject;
         }
 
-        public bool Switch(InputAction action) => action.ReadValue<float>() > 0.5f;
+        private static bool Switch(InputAction action) => action.ReadValue<float>() > 0.5f;
 
         protected override void OnEnable()
         {
             base.OnEnable();
 
-            Cursor.lockState = CursorLockMode.Locked;
+            cursorReservation = new CursorLock.CursorReservation(CursorLockMode.Locked);
+            cursorReservation.Push();
 
             interact.performed += Interact;
             throwObject.performed += Throw;
@@ -135,8 +144,8 @@ namespace BoschingMachine.Player
         protected override void OnDisable()
         {
             base.OnDisable();
-
-            Cursor.lockState = CursorLockMode.None;
+            
+            cursorReservation.Pop();
 
             interact.performed -= Interact;
             throwObject.performed -= Throw;
@@ -165,14 +174,6 @@ namespace BoschingMachine.Player
             base.Update();
 
             pickerUpper.Update(holdTarget);
-
-#if !UNITY_EDITOR
-            if (Keyboard.current.escapeKey.wasPressedThisFrame)
-            {
-                if (Cursor.lockState == CursorLockMode.Locked) Cursor.lockState = CursorLockMode.None;
-                else Cursor.lockState = CursorLockMode.Locked;
-            }
-#endif
         }
 
         protected override void FixedUpdate()
@@ -204,7 +205,7 @@ namespace BoschingMachine.Player
 
         private Vector2 GetLookDelta()
         {
-            Vector2 input = Vector2.zero;
+            var input = Vector2.zero;
 
             if (Cursor.lockState != CursorLockMode.Locked) return input;
 

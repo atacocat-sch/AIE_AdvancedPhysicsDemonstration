@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts.Utility
 {
     public static class Extensions
     {
@@ -19,11 +18,11 @@ namespace BoschingMachine
             if (c == 1) return list.First();
 
             var best = list.First();
-            for (int j = 0; j < list.Count(); j++)
+            for (var j = 0; j < list.Count(); j++)
             {
                 var element = list.ElementAt(j);
-                float s1 = scoringMethod(element);
-                float s2 = scoringMethod(best);
+                var s1 = scoringMethod(element);
+                var s2 = scoringMethod(best);
                 if (s1 > s2)
                 {
                     i = j;

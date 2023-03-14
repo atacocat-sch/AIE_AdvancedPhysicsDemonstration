@@ -1,43 +1,46 @@
-using BoschingMachine.Player;
-using BoschingMachine.Utility;
+using BoschingMachine.Logic.Scripts.Utility;
 using Cinemachine;
 using UnityEngine;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts.Player
 {
     [System.Serializable]
     public class PlayerCameraAnimator
     {
-        [SerializeField] Transform animationContainer;
+        [SerializeField] private Transform animationContainer;
 
         [Space]
-        [SerializeField] float defaultFov;
+        [SerializeField]
+        private float defaultFov;
 
         [Space]
-        [SerializeField] float moveTilt;
+        [SerializeField]
+        private float moveTilt;
 
         [Space]
-        [SerializeField] float smoothTime;
+        [SerializeField]
+        private float smoothTime;
 
         [Space]
-        [SerializeField] float crouchTime;
-        [SerializeField] float crouchCamOffset;
-        [SerializeField] float crouchZoom;
+        [SerializeField]
+        private float crouchTime;
+        [SerializeField] private float crouchCamOffset;
+        [SerializeField] private float crouchZoom;
 
-        PlayerBiped biped;
+        private PlayerBiped biped;
 
-        Vector3 offset;
-        Vector2 target;
-        Vector2 position;
-        Vector2 velocity;
+        private Vector3 offset;
+        private Vector2 target;
+        private Vector2 position;
+        private Vector2 velocity;
 
-        float rotationTarget;
-        float rotation;
-        float rotationalVelocity;
+        private float rotationTarget;
+        private float rotation;
+        private float rotationalVelocity;
 
-        Vector3 relativeVelocity;
+        private Vector3 relativeVelocity;
 
-        float crouchPercent;
+        private float crouchPercent;
 
         public bool Crouched { get; set; }
         public float Zoom { get; set; }
@@ -55,7 +58,7 @@ namespace BoschingMachine
         private void CrouchCam()
         {
             crouchPercent = Mathf.MoveTowards(crouchPercent, Crouched ? 1.0f : 0.0f, Time.deltaTime / crouchTime);
-            var smoothed = Curves.Smootherdamp(crouchPercent);
+            var smoothed = Curves.Smootherstep(crouchPercent);
 
             offset += Vector3.up * crouchCamOffset * smoothed;
             Zoom *= Mathf.Lerp(1.0f, crouchZoom, smoothed);
@@ -63,7 +66,7 @@ namespace BoschingMachine
 
         private void CameraMoveTilt(PlayerBiped biped)
         {
-            float dot = Vector3.Dot(-biped.Head.transform.right, relativeVelocity);
+            var dot = Vector3.Dot(-biped.Head.transform.right, relativeVelocity);
             rotationTarget += dot * moveTilt;
         }
 

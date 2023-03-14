@@ -1,18 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts.Level.Elevator
 {
     [System.Serializable]
     public class ElevatorDoor
     {
-        [SerializeField] Transform[] doors;
-        [SerializeField] float doorOpenDistance;
-        [SerializeField] float doorOpenTime;
+        [SerializeField] private Transform[] doors;
+        [SerializeField] private float doorOpenDistance;
+        [SerializeField] private float doorOpenTime;
 
-        float doorPos;
-        float doorVel;
+        private float doorPos;
+        private float doorVel;
 
         public bool IsDoorOpen { get; set; }
         public bool DoorsClosed => doorPos < 0.01f;

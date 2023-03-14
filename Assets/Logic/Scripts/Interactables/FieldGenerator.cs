@@ -1,18 +1,19 @@
-using BoschingMachine.SignalGroups;
+using BoschingMachine.Logic.Scripts.Level.Signal_Groups;
+using BoschingMachine.Logic.Scripts.Utility;
 using UnityEngine;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts.Interactables
 {
     public class FieldGenerator : MonoBehaviour
     {
-        [SerializeField] float smoothTime;
-        
-        Transform fieldTransform;
-        SignalGroup signalGroup;
-        new Collider collider;
+        [SerializeField] private float smoothTime;
 
-        float openPercent;
-        float velocity;
+        private Transform fieldTransform;
+        private SignalGroup signalGroup;
+        private new Collider collider;
+
+        private float openPercent;
+        private float velocity;
 
         public bool State => signalGroup.StateB;
 

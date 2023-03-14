@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts.Utility
 {
     public static class TMPUtil
     {

@@ -1,17 +1,14 @@
-using BoschingMachine.Bipedal;
-using BoschingMachine.Interactables;
-using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using BoschingMachine.Logic.Scripts.Interactables;
 using UnityEngine;
 
-namespace BoschingMachine.Elevators
+namespace BoschingMachine.Logic.Scripts.Level.Elevator
 {
     public class ElevatorExtraSwitch : Interactable
     {
-        [SerializeField] SwitchType type;
+        [SerializeField] private SwitchType type;
 
-        Elevator elevator;
+        private Elevator elevator;
 
         public static readonly Dictionary<SwitchType, string> Labels = new()
         {
@@ -25,14 +22,7 @@ namespace BoschingMachine.Elevators
             elevator = GetComponentInParent<Elevator>();
         }
 
-#if !UNITY_EDITOR
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hwnd, int nCmdShow);
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetActiveWindow();
-#endif
-
-        protected override void FinishInteract(Biped biped)
+        protected override void FinishInteract(Biped.Biped biped)
         {
             switch (type)
             {
@@ -44,9 +34,6 @@ namespace BoschingMachine.Elevators
                     break;
                 case SwitchType.CallHelp:
                     System.Diagnostics.Process.Start("https://www.wikihow.com/Survive-Being-Stuck-in-a-Lift");
-#if !UNITY_EDITOR
-                    ShowWindow(GetActiveWindow(), 2);
-#endif
                     break;
             }
         }

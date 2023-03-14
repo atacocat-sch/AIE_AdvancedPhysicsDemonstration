@@ -1,23 +1,22 @@
-using BoschingMachine.Bipedal;
-using BoschingMachine.SignalGroups;
-using System.Collections.Generic;
+using BoschingMachine.Logic.Scripts.Interactables;
 using UnityEngine;
 
-namespace BoschingMachine.Interactables
+namespace BoschingMachine.Logic.Scripts.Level.Signal_Groups
 {
     public class SignalGroupToggle : Interactable
     {
         [Space]
-        [SerializeField] string displayText;
+        [SerializeField]
+        private string displayText;
 
-        SignalGroup signalGroup;
+        private SignalGroup signalGroup;
 
         private void Awake()
         {
             signalGroup = SignalGroup.GetOrCreate(gameObject);
         }
 
-        protected override void FinishInteract(Biped biped)
+        protected override void FinishInteract(Biped.Biped biped)
         {
             signalGroup.Call(!signalGroup.StateB);
         }

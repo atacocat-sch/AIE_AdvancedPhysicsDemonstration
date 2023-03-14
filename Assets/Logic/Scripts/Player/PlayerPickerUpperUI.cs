@@ -1,18 +1,19 @@
-using UnityEngine;
+using BoschingMachine.Logic.Scripts.Utility;
 using TMPro;
+using UnityEngine;
 
-namespace BoschingMachine.Player.Modules
+namespace BoschingMachine.Logic.Scripts.Player
 {
     [System.Serializable]
     public class PlayerPickerUpperUI
     {
-        [SerializeField] TMP_Text text;
-        [SerializeField] CanvasGroup group;
-        [SerializeField] SeccondOrderDynamicsF spring;
+        [SerializeField] private TMP_Text text;
+        [SerializeField] private CanvasGroup group;
+        [SerializeField] private SeccondOrderDynamicsF spring;
 
         public void Update (PlayerPickerUpper pickerUpper)
         {
-            float scaleTarget = 0.0f;
+            var scaleTarget = 0.0f;
 
             if (!pickerUpper.HeldObject && pickerUpper.LookingAt)
             {

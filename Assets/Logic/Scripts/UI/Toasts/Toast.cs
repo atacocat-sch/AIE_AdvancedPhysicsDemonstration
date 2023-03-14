@@ -1,18 +1,18 @@
-using UnityEngine;
-using TMPro;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 
-namespace BoschingMachine.UI.Toasts
+namespace BoschingMachine.Logic.Scripts.UI.Toasts
 {
     [SelectionBase]
     [DisallowMultipleComponent]
     public sealed class Toast : MonoBehaviour
     {
-        [SerializeField] TMP_Text template;
-        [SerializeField] ToastLocation location;
-        [SerializeField] int maxToasts;
+        [SerializeField] private TMP_Text template;
+        [SerializeField] private ToastLocation location;
+        [SerializeField] private int maxToasts;
 
-        List<ToastInstance> toasts;
+        private List<ToastInstance> toasts;
 
         private static event System.Action<string, ToastLocation> ToastRaisedEvent;
 

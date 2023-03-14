@@ -1,39 +1,42 @@
-using BoschingMachine.Bipedal;
-using UnityEngine;
 using System.Linq;
-using BoschingMachine.Tags;
+using BoschingMachine.Logic.Scripts.Tags;
+using BoschingMachine.Logic.Scripts.Utility;
+using UnityEngine;
 
-namespace BoschingMachine.Player.Modules
+namespace BoschingMachine.Logic.Scripts.Player
 {
     [System.Serializable]
     public sealed class PlayerPickerUpper
     {
-        [SerializeField] float grabRange;
-        [SerializeField] float throwSpeed;
-        [SerializeField] float maxDistance;
+        [SerializeField] private float grabRange;
+        [SerializeField] private float throwSpeed;
+        [SerializeField] private float maxDistance;
 
         [Space]
-        [SerializeField] Spring spring;
+        [SerializeField]
+        private Spring spring;
 
         [Space]
-        [SerializeField] float rotationDamper;
+        [SerializeField]
+        private float rotationDamper;
 
         [Space]
-        [SerializeField] LineRenderer lines;
-        [SerializeField] float lineVolume;
-        [SerializeField] PlayerPickerUpperUI ui;
-        [SerializeField] Tag ignoreTag;
+        [SerializeField]
+        private LineRenderer lines;
+        [SerializeField] private float lineVolume;
+        [SerializeField] private PlayerPickerUpperUI ui;
+        [SerializeField] private Tag ignoreTag;
 
         public Rigidbody HeldObject { get; private set; }
         public Rigidbody LookingAt { get; private set; }
 
-        public void FixedProcess(Biped biped, Transform holdTarget)
+        public void FixedProcess(Biped.Biped biped, Transform holdTarget)
         {
             TryGetLookingAt(biped);
 
             if (!HeldObject) return;
 
-            Vector3 vec = holdTarget.position - HeldObject.position;
+            var vec = holdTarget.position - HeldObject.position;
 
             if (vec.sqrMagnitude > maxDistance * maxDistance)
             {
@@ -52,16 +55,16 @@ namespace BoschingMachine.Player.Modules
             {
                 lines.enabled = true;
 
-                int segments = 16;
+                var segments = 16;
                 lines.positionCount = segments;
-                for (int i = 0; i < segments; i++)
+                for (var i = 0; i < segments; i++)
                 {
                     var p = i / (segments - 1.0f);
                     lines.SetPosition(i, Vector3.Lerp(HeldObject.position, holdTarget.position, p));
                 }
 
-                float distance = (HeldObject.position - holdTarget.position).magnitude;
-                float factor = Mathf.Sqrt(lineVolume / distance);
+                var distance = (HeldObject.position - holdTarget.position).magnitude;
+                var factor = Mathf.Sqrt(lineVolume / distance);
                 if (factor > 1.0f) factor = 1.0f;
 
                 lines.widthCurve.MoveKey(1, new Keyframe(0.5f, factor));
@@ -74,7 +77,7 @@ namespace BoschingMachine.Player.Modules
             ui.Update(this);
         }
 
-        public bool TryGrabOrDrop(Biped biped)
+        public bool TryGrabOrDrop(Biped.Biped biped)
         {
             if (HeldObject)
             {
@@ -90,11 +93,11 @@ namespace BoschingMachine.Player.Modules
             return false;
         }
 
-        public bool Throw(Biped biped)
+        public bool Throw(Biped.Biped biped)
         {
             if (!HeldObject) return false;
 
-            Vector3 throwForce = biped.Head.forward * throwSpeed * HeldObject.mass;
+            var throwForce = biped.Head.forward * throwSpeed * HeldObject.mass;
             throwForce = Vector3.ClampMagnitude(throwForce, spring.maxForce);
 
             HeldObject.AddForce(throwForce, ForceMode.Impulse);
@@ -103,11 +106,11 @@ namespace BoschingMachine.Player.Modules
             return true;
         }
 
-        public void TryGetLookingAt(Biped biped)
+        public void TryGetLookingAt(Biped.Biped biped)
         {
             LookingAt = null;
 
-            Ray ray = new Ray(biped.Head.position, biped.Head.forward);
+            var ray = new Ray(biped.Head.position, biped.Head.forward);
 
             var results = Physics.RaycastAll(ray, grabRange).OrderBy(a => a.distance).Where(a => !a.transform.HasTag(ignoreTag));
 

@@ -1,14 +1,14 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace BoschingMachine.SignalGroups
+namespace BoschingMachine.Logic.Scripts.Level.Signal_Groups
 {
     public class SignalGroupUIButton : Button
     {
         public bool toggle;
         public int callData;
 
-        SignalGroup signalGroup;
+        private SignalGroup signalGroup;
 
         protected override void Awake()
         {

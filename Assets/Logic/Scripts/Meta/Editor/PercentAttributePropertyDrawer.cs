@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace BoschingMachine.Editor
+namespace BoschingMachine.Logic.Scripts.Meta.Editor
 {
     [CustomPropertyDrawer(typeof(PercentAttribute))]
     public class PercentAttributePropertyDrawer : PropertyDrawer

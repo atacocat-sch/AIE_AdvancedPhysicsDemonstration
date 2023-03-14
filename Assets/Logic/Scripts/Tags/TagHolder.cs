@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BoschingMachine.Tags
+namespace BoschingMachine.Logic.Scripts.Tags
 {
     public class TagHolder : MonoBehaviour
     {
-        [SerializeField] List<Tag> tags = new List<Tag>();
+        [SerializeField] private List<Tag> tags = new List<Tag>();
 
         public List<Tag> Tags => tags;
 

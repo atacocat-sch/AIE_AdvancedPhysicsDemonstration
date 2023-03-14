@@ -1,12 +1,9 @@
-using UnityEngine;
-using UnityEditor;
-using System.Drawing;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Mathematics;
+using UnityEditor;
+using UnityEngine;
 
-namespace BoschingMachine.Editor
+namespace BoschingMachine.Logic.Scripts.Editor
 {
     public static class FancyLines
     {

@@ -1,22 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BoschingMachine.Elevators
+namespace BoschingMachine.Logic.Scripts.Level.Elevator
 {
     public class ElevatorCallSwitchboard : MonoBehaviour
     {
-        [SerializeField] ElevatorCallSwitch switchPrefab;
-        [SerializeField] int rowMax = 1;
-        [SerializeField] Vector2 pannelSize;
-        [SerializeField] Vector3 offset;
+        [SerializeField] private ElevatorCallSwitch switchPrefab;
+        [SerializeField] private int rowMax = 1;
+        [SerializeField] private Vector2 pannelSize;
+        [SerializeField] private Vector3 offset;
 
         [Space]
         [Header("Gizmos")]
-        [SerializeField] int floors = 2;
+        [SerializeField]
+        private int floors = 2;
 
-        List<ElevatorCallSwitch> instances;
+        private List<ElevatorCallSwitch> instances;
 
-        ElevatorGroup elevatorGroup;
+        private ElevatorGroup elevatorGroup;
         
         private void Start()
         {
@@ -29,7 +30,7 @@ namespace BoschingMachine.Elevators
 
         private void ReinstanceButtons()
         {
-            int floors = elevatorGroup.Floors.Length;
+            var floors = elevatorGroup.Floors.Length;
             while (floors > instances.Count)
             {
                 var instance = Instantiate(switchPrefab, transform);
@@ -42,11 +43,11 @@ namespace BoschingMachine.Elevators
                 Destroy(instance);
             }
 
-            int columns = (floors - 1) / rowMax;
-            int rows = Mathf.Min(floors, rowMax);
+            var columns = (floors - 1) / rowMax;
+            var rows = Mathf.Min(floors, rowMax);
             var buttonSpacing = pannelSize / new Vector2(columns + 1, rows + 1);
 
-            for (int i = 0; i < floors; i++)
+            for (var i = 0; i < floors; i++)
             {
                 var instance = instances[i];
                 var row = i % rows;
@@ -68,14 +69,14 @@ namespace BoschingMachine.Elevators
 
             Gizmos.matrix = transform.localToWorldMatrix;
 
-            int columns = (floors - 1) / rowMax;
-            int rows = Mathf.Min(floors, rowMax);
+            var columns = (floors - 1) / rowMax;
+            var rows = Mathf.Min(floors, rowMax);
             var buttonSpacing = pannelSize / new Vector2(columns + 1, rows + 1);
 
-            for (int i = 0; i < floors; i++)
+            for (var i = 0; i < floors; i++)
             {
-                int row = i % rows;
-                int column = i / rows;
+                var row = i % rows;
+                var column = i / rows;
 
                 var x = (columns / 2.0f) - column;
                 var y = ((rows - 1.0f) / 2.0f) - row;

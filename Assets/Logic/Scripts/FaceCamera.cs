@@ -1,13 +1,13 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts
 {
     [SelectionBase]
     [DisallowMultipleComponent]
     public sealed class FaceCamera : MonoBehaviour
     {
-        [SerializeField] bool flip;
+        [SerializeField] private bool flip;
 
         private void OnEnable()
         {

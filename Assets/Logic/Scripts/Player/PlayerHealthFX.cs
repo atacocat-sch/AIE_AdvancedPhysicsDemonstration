@@ -1,15 +1,15 @@
-using BoschingMachine.Vitality;
+using BoschingMachine.Logic.Scripts.Vitallity;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts.Player
 {
     public class PlayerHealthFX : MonoBehaviour
     {
-        [SerializeField] Volume damageVolume;
-        [SerializeField] float decay;
+        [SerializeField] private Volume damageVolume;
+        [SerializeField] private float decay;
 
-        Health health;
+        private Health health;
 
         private void Awake()
         {

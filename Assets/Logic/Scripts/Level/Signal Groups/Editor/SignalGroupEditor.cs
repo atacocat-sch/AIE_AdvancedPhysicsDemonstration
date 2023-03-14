@@ -1,9 +1,7 @@
-using UnityEngine;
 using UnityEditor;
-using System.Linq;
-using BoschingMachine.SignalGroups;
+using UnityEngine;
 
-namespace BoschingMachine.Editor
+namespace BoschingMachine.Logic.Scripts.Level.Signal_Groups.Editor
 {
     [CustomEditor(typeof(SignalGroup))]
     public class SignalGroupEditor : UnityEditor.Editor

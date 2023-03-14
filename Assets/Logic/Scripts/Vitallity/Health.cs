@@ -1,17 +1,19 @@
+using BoschingMachine.Logic.Scripts.Signals;
 using UnityEngine;
 
-namespace BoschingMachine.Vitality
+namespace BoschingMachine.Logic.Scripts.Vitallity
 {
     [SelectionBase]
     [DisallowMultipleComponent]
     public class Health : MonoBehaviour
     {
-        [SerializeField][Range(0.0f, 1.0f)] float normalizedHealth;
-        [SerializeField] float maxHealth;
+        [SerializeField][Range(0.0f, 1.0f)] private float normalizedHealth;
+        [SerializeField] private float maxHealth;
 
         [Space]
-        [SerializeField] bool destroyOnDeath;
-        [SerializeField] Signal deathSignal;
+        [SerializeField]
+        private bool destroyOnDeath;
+        [SerializeField] private Signal deathSignal;
 
         public event System.Action<DamageArgs> DamageEvent;
         public event System.Action<DamageArgs> DeathEvent;

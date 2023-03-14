@@ -1,37 +1,40 @@
-using BoschingMachine.Editor;
 using System.Collections.Generic;
+using BoschingMachine.Logic.Scripts.Meta;
 using UnityEngine;
 
-namespace BoschingMachine.Bipedal
+namespace BoschingMachine.Logic.Scripts.Biped
 {
     [System.Serializable]
     public sealed class BipedalMovement
     {
-        [SerializeField] float moveSpeed = 10.0f;
-        [SerializeField] float accelerationTime = 0.06f;
-        [SerializeField] float decelerationTime = 0.06f;
+        [SerializeField] private float moveSpeed = 10.0f;
+        [SerializeField] private float accelerationTime = 0.06f;
+        [SerializeField] private float decelerationTime = 0.06f;
 
         [Space]
-        [SerializeField][Percent] float airAccelerationPenalty = 0.2f;
+        [SerializeField][Percent]
+        private float airAccelerationPenalty = 0.2f;
 
         [Space]
-        [SerializeField] float jumpHeight = 2.5f;
-        [SerializeField] float upGravity = 3.0f;
-        [SerializeField] float downGravity = 4.0f;
-        [SerializeField] float jumpSpringPauseTime = 0.1f;
+        [SerializeField]
+        private float jumpHeight = 2.5f;
+        [SerializeField] private float upGravity = 3.0f;
+        [SerializeField] private float downGravity = 4.0f;
+        [SerializeField] private float jumpSpringPauseTime = 0.1f;
 
         [Space]
-        [SerializeField] float springDistance = 1.2f;
-        [SerializeField] float springForce = 500.0f;
-        [SerializeField] float springDamper = 25.0f;
-        [SerializeField] float groundCheckRadius = 0.4f;
-        [SerializeField] float maxWalkableSlope = 35.0f;
-        [SerializeField] LayerMask groundCheckMask = 0b1;
+        [SerializeField]
+        private float springDistance = 1.2f;
+        [SerializeField] private float springForce = 500.0f;
+        [SerializeField] private float springDamper = 25.0f;
+        [SerializeField] private float groundCheckRadius = 0.4f;
+        [SerializeField] private float maxWalkableSlope = 35.0f;
+        [SerializeField] private LayerMask groundCheckMask = 0b1;
 
-        bool previousJumpState;
-        float lastJumpTime;
-        Vector3 lastGroundPosition;
-        Vector3 lastGroundVelocity;
+        private bool previousJumpState;
+        private float lastJumpTime;
+        private Vector3 lastGroundPosition;
+        private Vector3 lastGroundVelocity;
 
         public float MaxMoveSpeed => moveSpeed;
         public float JumpForce => Mathf.Sqrt(2.0f * -Physics.gravity.y * upGravity * jumpHeight);
@@ -80,7 +83,7 @@ namespace BoschingMachine.Bipedal
             if (!IsGrounded) return;
             if (!GroundRigidbody) return;
 
-            Vector3 force = GroundVelocity - lastGroundVelocity;
+            var force = GroundVelocity - lastGroundVelocity;
             rigidbody.AddForce(force, ForceMode.VelocityChange);
         }
 
@@ -88,8 +91,8 @@ namespace BoschingMachine.Bipedal
         {
             if (IsGrounded && Time.time > lastJumpTime + jumpSpringPauseTime)
             {
-                float contraction = 1.0f - (DistanceToGround + springDistance) / springDistance;
-                Vector3 moment = Vector3.up * contraction * springForce;
+                var contraction = 1.0f - (DistanceToGround + springDistance) / springDistance;
+                var moment = Vector3.up * contraction * springForce;
                 moment -= Vector3.up * RelativeVelocity(rigidbody).y * springDamper;
 
                 AddMomentToSelfAndGround(rigidbody, moment);
@@ -106,15 +109,15 @@ namespace BoschingMachine.Bipedal
         {
             moveDirection = Vector3.ClampMagnitude(moveDirection, 1.0f);
 
-            Vector3 target = moveDirection * moveSpeed + GroundVelocity;
-            Vector3 current = rigidbody.velocity;
+            var target = moveDirection * moveSpeed + GroundVelocity;
+            var current = rigidbody.velocity;
 
-            Vector3 delta = Vector3.ClampMagnitude(target - current, moveSpeed);
+            var delta = Vector3.ClampMagnitude(target - current, moveSpeed);
             delta.y = 0.0f;
 
             var acceleration = moveSpeed / (target.sqrMagnitude > current.sqrMagnitude ? accelerationTime : decelerationTime);
 
-            Vector3 moment = delta / moveSpeed * acceleration;
+            var moment = delta / moveSpeed * acceleration;
 
             if (!IsGrounded) moment *= airAccelerationPenalty;
 
@@ -135,7 +138,7 @@ namespace BoschingMachine.Bipedal
 
         private Vector3 GetGravity(Rigidbody rigidbody, bool jump)
         {
-            float scale = upGravity;
+            var scale = upGravity;
             if (!jump)
             {
                 scale = downGravity;
@@ -150,7 +153,7 @@ namespace BoschingMachine.Bipedal
 
         public void AddMomentToSelfAndGround(Rigidbody self, Vector3 moment, ForceMode forceMode = ForceMode.Force)
         {
-            Vector3 force = moment * self.mass;
+            var force = moment * self.mass;
             self.AddForce(force, forceMode);
             if (GroundRigidbody && IsGrounded && false)
             {
@@ -160,7 +163,7 @@ namespace BoschingMachine.Bipedal
 
         public float GetDistanceToGround(Rigidbody rigidbody)
         {
-            List<RaycastHit> hits = new List<RaycastHit>(Physics.SphereCastAll(rigidbody.position + Vector3.up * groundCheckRadius, groundCheckRadius, Vector3.down, springDistance, groundCheckMask));
+            var hits = new List<RaycastHit>(Physics.SphereCastAll(rigidbody.position + Vector3.up * groundCheckRadius, groundCheckRadius, Vector3.down, springDistance, groundCheckMask));
 
             RaycastHit? hit = null;
             foreach (var other in hits)
@@ -193,7 +196,7 @@ namespace BoschingMachine.Bipedal
 
         public RaycastHit GetBetterHit(RaycastHit a, RaycastHit b)
         {
-            RaycastHit close = a.distance < b.distance ? a : b;
+            var close = a.distance < b.distance ? a : b;
 
             bool Static(RaycastHit h) => h.rigidbody ? h.rigidbody.isKinematic : true;
 

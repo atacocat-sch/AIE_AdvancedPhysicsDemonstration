@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts.Signals
 {
     [CreateAssetMenu(menuName = "Scriptable Objects/Signal")]
     public class Signal : ScriptableObject

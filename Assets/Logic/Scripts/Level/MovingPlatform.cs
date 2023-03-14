@@ -1,20 +1,20 @@
 using UnityEngine;
 
-namespace BoschingMachine.Level
+namespace BoschingMachine.Logic.Scripts.Level
 {
     public class MovingPlatform : MonoBehaviour
     {
-        [SerializeField] Rigidbody platform;
-        [SerializeField] Transform pathParent;
-        [SerializeField] float moveSpeed = 2.0f;
-        [SerializeField] float smoothTime = 0.2f;
-        [SerializeField] float holdTime = 3.0f;
+        [SerializeField] private Rigidbody platform;
+        [SerializeField] private Transform pathParent;
+        [SerializeField] private float moveSpeed = 2.0f;
+        [SerializeField] private float smoothTime = 0.2f;
+        [SerializeField] private float holdTime = 3.0f;
 
-        float timer = 0.0f;
-        float distance = 0.0f;
-        int index = 0;
-        Vector3 velocity;
-        Vector3 target;
+        private float timer = 0.0f;
+        private float distance = 0.0f;
+        private int index = 0;
+        private Vector3 velocity;
+        private Vector3 target;
 
         public Rigidbody Platform => platform;
         public Transform PathParent => pathParent;
@@ -58,7 +58,7 @@ namespace BoschingMachine.Level
             }
 
             target = last + direction * distance;
-            Vector3 newPosition = Vector3.SmoothDamp(platform.position, target, ref velocity, smoothTime);
+            var newPosition = Vector3.SmoothDamp(platform.position, target, ref velocity, smoothTime);
             platform.MovePosition(newPosition);
         }
 
@@ -76,7 +76,7 @@ namespace BoschingMachine.Level
         {
             if (PathParent)
             {
-                int i = 0;
+                var i = 0;
                 foreach (Transform child in PathParent)
                 {
                     child.name = $"Path Point.{++i}";

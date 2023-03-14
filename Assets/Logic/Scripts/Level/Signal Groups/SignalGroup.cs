@@ -1,10 +1,10 @@
 using UnityEngine;
 
-namespace BoschingMachine.SignalGroups
+namespace BoschingMachine.Logic.Scripts.Level.Signal_Groups
 {
     public class SignalGroup : MonoBehaviour
     {
-        [SerializeField] int startingState;
+        [SerializeField] private int startingState;
 
         public int State { get; set; }
         public bool StateB => State > 0;

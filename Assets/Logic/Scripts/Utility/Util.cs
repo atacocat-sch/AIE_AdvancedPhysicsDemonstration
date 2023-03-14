@@ -1,4 +1,4 @@
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts.Utility
 {
     public static class Util
     {

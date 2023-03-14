@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
+using UnityEngine;
 
-namespace BoschingMachine.Editor
+namespace BoschingMachine.Logic.Scripts.Meta
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
     public class PercentAttribute : PropertyAttribute

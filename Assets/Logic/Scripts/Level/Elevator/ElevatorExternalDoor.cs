@@ -1,15 +1,15 @@
-using BoschingMachine.Elevators;
+using BoschingMachine.Logic.Scripts.Utility;
 using UnityEngine;
 
-namespace BoschingMachine.Elevators
+namespace BoschingMachine.Logic.Scripts.Level.Elevator
 {
     public class ElevatorExternalDoor : MonoBehaviour
     {
-        [SerializeField] ElevatorDoor doors;
+        [SerializeField] private ElevatorDoor doors;
 
-        ElevatorGroup group;
-        Elevator elevator;
-        int floor;
+        private ElevatorGroup group;
+        private Elevator elevator;
+        private int floor;
 
         private void Awake()
         {

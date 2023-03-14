@@ -1,8 +1,7 @@
-using UnityEngine;
 using UnityEditor;
-using BoschingMachine.Elevators;
+using UnityEngine;
 
-namespace BoschingMachine.Editor
+namespace BoschingMachine.Logic.Scripts.Level.Elevator.Editor
 {
     [CustomEditor(typeof(Elevator))]
     public class ElevatorEditor : UnityEditor.Editor

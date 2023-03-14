@@ -1,28 +1,29 @@
-using UnityEngine;
-using BoschingMachine.Vitality;
 using System.Collections.Generic;
+using BoschingMachine.Logic.Scripts.Vitallity;
+using UnityEngine;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts.Weapons
 {
     [System.Serializable]
     public class Gun
     {
-        [SerializeField] Transform muzzle;
-        [SerializeField] float damage;
-        [SerializeField] float firerate;
-        [SerializeField] float spray;
-        [SerializeField] GameObject hitPrefab;
+        [SerializeField] private Transform muzzle;
+        [SerializeField] private float damage;
+        [SerializeField] private float firerate;
+        [SerializeField] private float spray;
+        [SerializeField] private GameObject hitPrefab;
 
         [Space]
-        [SerializeField] List<ParticleSystem> fx;
+        [SerializeField]
+        private List<ParticleSystem> fx;
 
-        float lastFireTime;
+        private float lastFireTime;
 
         public void Shoot (GameObject shooter)
         {
             if (Time.time > lastFireTime + 60.0f / firerate)
             {
-                Ray ray = new Ray(muzzle.position, Quaternion.Euler(Random.insideUnitSphere * spray) * muzzle.forward);
+                var ray = new Ray(muzzle.position, Quaternion.Euler(Random.insideUnitSphere * spray) * muzzle.forward);
                 if (Physics.Raycast(ray, out var hit))
                 {
                     if (hit.transform.TryGetComponent(out Health health))

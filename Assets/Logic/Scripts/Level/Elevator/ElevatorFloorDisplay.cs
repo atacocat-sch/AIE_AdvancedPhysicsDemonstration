@@ -1,13 +1,12 @@
-using BoschingMachine.Elevators;
 using TMPro;
 using UnityEngine;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts.Level.Elevator
 {
     public class ElevatorFloorDisplay : MonoBehaviour
     {
-        TMP_Text text;
-        Elevator elevator;
+        private TMP_Text text;
+        private Elevator elevator;
 
         private void Start()
         {
@@ -49,8 +48,8 @@ namespace BoschingMachine
             var best = elevators[0];
             foreach (var other in elevators)
             {
-                float d1 = PlanarLength(other.transform.position - transform.position);
-                float d2 = PlanarLength(best.transform.position - transform.position);
+                var d1 = PlanarLength(other.transform.position - transform.position);
+                var d2 = PlanarLength(best.transform.position - transform.position);
 
                 if (d1 < d2)
                 {

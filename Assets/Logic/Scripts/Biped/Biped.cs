@@ -1,14 +1,14 @@
 using UnityEngine;
 
-namespace BoschingMachine.Bipedal
+namespace BoschingMachine.Logic.Scripts.Biped
 {
     [SelectionBase]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Rigidbody))]
     public class Biped : MonoBehaviour
     {
-        [SerializeField] BipedalMovement movement;
-        [SerializeField] Transform head;
+        [SerializeField] private BipedalMovement movement;
+        [SerializeField] private Transform head;
 
         public Rigidbody Rigidbody { get; private set; }
         public BipedalMovement Movement => movement;

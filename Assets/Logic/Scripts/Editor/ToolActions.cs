@@ -1,9 +1,8 @@
-using UnityEngine;
-using UnityEditor;
-using UnityEditor.MemoryProfiler;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts.Editor
 {
     public static class ToolActions
     {

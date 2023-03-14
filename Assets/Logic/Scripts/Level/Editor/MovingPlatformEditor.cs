@@ -1,12 +1,7 @@
-using BoschingMachine.Level;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Permissions;
 using UnityEditor;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
-namespace BoschingMachine.Editor
+namespace BoschingMachine.Logic.Scripts.Level.Editor
 {
     [CustomEditor(typeof(MovingPlatform))]
     public class MovingPlatformEditor : UnityEditor.Editor

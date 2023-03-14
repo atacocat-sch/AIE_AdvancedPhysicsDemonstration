@@ -1,14 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-namespace BoschingMachine.UI.Toasts
+namespace BoschingMachine.Logic.Scripts.UI.Toasts
 {
     [SelectionBase]
     [DisallowMultipleComponent]
     public sealed class ToastOnEnable : MonoBehaviour
     {
-        [SerializeField][TextArea] string message;
-        [SerializeField] Toast.ToastLocation location;
+        [SerializeField][TextArea] private string message;
+        [SerializeField] private Toast.ToastLocation location;
 
         private void OnEnable()
         {

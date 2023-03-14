@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts.Utility
 {
     [System.Serializable]
     public class Spring
@@ -17,13 +17,13 @@ namespace BoschingMachine
         public void Update (Vector3 target, float dt)
         {
             var diff = target - Position;
-            Vector3 force = GetForce(diff);
+            var force = GetForce(diff);
             Integrate(force, dt);
         }
 
         private Vector3 GetForce(Vector3 diff)
         {
-            Vector3 force = diff * constant - Velocity * damper;
+            var force = diff * constant - Velocity * damper;
             force = Vector3.ClampMagnitude(force * Mass, maxForce);
             return force;
         }

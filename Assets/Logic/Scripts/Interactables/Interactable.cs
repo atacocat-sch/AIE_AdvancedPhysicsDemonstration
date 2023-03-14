@@ -1,25 +1,25 @@
+using BoschingMachine.Logic.Scripts.Utility;
 using UnityEngine;
-using BoschingMachine.Bipedal;
 
-namespace BoschingMachine.Interactables
+namespace BoschingMachine.Logic.Scripts.Interactables
 {
     [SelectionBase]
     [DisallowMultipleComponent]
     public abstract class Interactable : MonoBehaviour
     {
-        [SerializeField] float interactTime;
+        [SerializeField] private float interactTime;
 
         public float InteractTime => interactTime;
-        public float GetInteractPercent(Biped biped) => biped == user ? interactPercent : 0.0f;
+        public float GetInteractPercent(Biped.Biped biped) => biped == user ? interactPercent : 0.0f;
         public virtual bool CanInteract => true;
 
         protected virtual string InoperableAppend => "Inoperable";
 
-        Biped user;
-        float interactPercent;
-        int useFrame;
+        private Biped.Biped user;
+        private float interactPercent;
+        private int useFrame;
 
-        public bool TryInteract(Biped biped, System.Action<float> partialCallback, System.Action finishCallback)
+        public bool TryInteract(Biped.Biped biped, System.Action<float> partialCallback, System.Action finishCallback)
         {
             if (!CanInteract) return false;
 
@@ -57,7 +57,7 @@ namespace BoschingMachine.Interactables
             return true;
         }
 
-        public virtual void CancelInteract(Biped user)
+        public virtual void CancelInteract(Biped.Biped user)
         {
             if (user != this.user) return;
 
@@ -66,8 +66,8 @@ namespace BoschingMachine.Interactables
             useFrame = 0;
         }
 
-        protected virtual void InteractTick(Biped biped, float t) { }
-        protected abstract void FinishInteract(Biped biped);
+        protected virtual void InteractTick(Biped.Biped biped, float t) { }
+        protected abstract void FinishInteract(Biped.Biped biped);
 
         public virtual string BuildInteractString(string passthrough = "")
         {

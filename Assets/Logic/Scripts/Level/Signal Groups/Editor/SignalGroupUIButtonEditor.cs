@@ -1,8 +1,7 @@
-using BoschingMachine.SignalGroups;
 using UnityEditor;
 using UnityEditor.UI;
 
-namespace BoschingMachine.Editor
+namespace BoschingMachine.Logic.Scripts.Level.Signal_Groups.Editor
 {
     [CustomEditor(typeof(SignalGroupUIButton))]
     public class SignalGroupUIButtonEditor : ButtonEditor

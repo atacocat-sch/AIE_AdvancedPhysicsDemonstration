@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BoschingMachine
+namespace BoschingMachine.Logic.Scripts
 {
     [SelectionBase]
     [DisallowMultipleComponent]
     public sealed class DeadBody : MonoBehaviour
     {
-        [SerializeField] Transform bodyRoot;
+        [SerializeField] private Transform bodyRoot;
 
-        List<Rigidbody> segments;
+        private List<Rigidbody> segments;
 
         private void Awake()
         {
@@ -18,11 +18,11 @@ namespace BoschingMachine
 
         private void FixedUpdate()
         {
-            Vector3 translation = Vector3.zero;
+            var translation = Vector3.zero;
 
             foreach (var segment in segments)
             {
-                Vector3 vector = segment.transform.position - transform.position;
+                var vector = segment.transform.position - transform.position;
                 translation += vector;
             }
 
