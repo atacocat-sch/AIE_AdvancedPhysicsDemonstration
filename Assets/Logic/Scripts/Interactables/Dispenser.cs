@@ -1,3 +1,6 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using BoschingMachine.Logic.Scripts.Animbites;
 using BoschingMachine.Logic.Scripts.Utility;
 using UnityEngine;
@@ -11,9 +14,12 @@ namespace BoschingMachine.Logic.Scripts.Interactables
         [SerializeField] private string itemName;
         [SerializeField] private string itemPlural;
 
+        [Space] 
+        [SerializeField] private float spawnDelay;
+        [SerializeField] private string animationName;
+        
         [Space]
-        [SerializeField]
-        private bool limitDeployment;
+        [SerializeField] private bool limitDeployment;
         [SerializeField] private int capacity;
         [SerializeField] private int usesLeft;
         [SerializeField] private float rechargeTime;
@@ -29,12 +35,15 @@ namespace BoschingMachine.Logic.Scripts.Interactables
 
         private float timer;
         private bool cloged;
+        private bool locked;
+        private Animator animator;
 
         public override bool CanInteract
         {
             get
             {
                 if (cloged) return false;
+                if (locked) return false;
                 if (usesLeft <= 0 && limitDeployment) return false;
 
                 return true;
@@ -44,6 +53,11 @@ namespace BoschingMachine.Logic.Scripts.Interactables
         protected override string InoperableAppend => $"Out of {Plural}";
 
         private string Plural => string.IsNullOrEmpty(itemPlural) ? $"{itemName}s" : itemPlural;
+
+        private void Awake()
+        {
+            animator = GetComponentInChildren<Animator>();
+        }
 
         private void Update()
         {
@@ -91,18 +105,32 @@ namespace BoschingMachine.Logic.Scripts.Interactables
         {
             if (usesLeft > 0 || !limitDeployment)
             {
-                var instance = Instantiate(prefab, spawnpoint.position, spawnpoint.rotation);
-                instance.name = prefab.name;
-                usesLeft--;
-                cloged = true;
-                timer = 0.0f;
-
-                squash.Play(this, transform);
+                if (animator) animator.Play(animationName, 0, 0.0f);
+                else squash.Play(this, transform);
+                StartCoroutine(DeferredSpawn());
             }
         }
 
+        public IEnumerator DeferredSpawn()
+        {
+            locked = true;
+            yield return new WaitForSeconds(spawnDelay);
+            
+            var instance = Instantiate(prefab, spawnpoint.position, spawnpoint.rotation);
+            instance.name = prefab.name;
+            usesLeft--;
+            cloged = true;
+            timer = 0.0f;
+            
+            locked = false;
+        }
+        
         public override string BuildInteractString(string passthrough = "")
         {
+            if (locked)
+            {
+                return TMPUtil.Color("Working", Color.gray);
+            }
             if (cloged)
             {
                 return TMPUtil.Color("Dispenser Jammed", Color.gray);
